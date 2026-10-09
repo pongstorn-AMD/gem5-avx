@@ -108,20 +108,35 @@ def unop(name, microop, size, only=None):
 def shift_imm(name, microop, size, only=None):
     """
     A shift by an immediate: the count comes from the immediate byte and the
-    value shifted is the register or memory source, so there is no second
-    register operand. The microop name takes the assembler's 'i' suffix,
-    which selects the immediate form of an op2-using microop.
+    value shifted is the source, so there is no second register operand. The
+    microop name takes the assembler's 'i' suffix, which selects the
+    immediate form of an op2-using microop.
     """
     out = []
-    for ext, reg, load, width in _widths(only):
-        tail = "size=%d, ext=%s" % (size, ext)
-        for form, src, riprel in (("%sMM_I" % ext[0], "%sm" % reg, False),
-                                  ("M_I", "uvec1", False),
-                                  ("P_I", "uvec1", True)):
-            # VEX_VPSLLW_XMM_XMM_I, _XMM_M_I, _XMM_P_I
-            pre = [] if src == "%sm" % reg else _load(load, width, riprel)
-            out.append(_macroop("%s_%s_%s" % (name, ext, form), pre + [
-                "    %si %s1, %s, imm, %s" % (microop, reg, src, tail)]))
+    for ext, reg, _, _ in _widths(only):
+        # VEX_VPSLLW_XMM_XMM_I
+        out.append(_macroop("%s_%s_%s_I" % (name, ext, ext), [
+            "    %si %s1, %sm, imm, size=%d, ext=%s"
+            % (microop, reg, reg, size, ext)]))
+    return "".join(out) + shift_imm_invalid_memory(name, only)
+
+
+def shift_imm_invalid_memory(name, only=None):
+    """
+    The memory forms of a shift by an immediate.
+
+    VEX allows only a register source here: ModRM.r/m in the 0F 71, 72 and 73
+    groups is a register operand, so a memory encoding does not exist and the
+    hardware raises #UD. The decoder splits on ModRM.mod all the same and so
+    names a macroop for each memory form, which must therefore raise the same
+    fault. EVEX is the other way round -- there the source may be memory --
+    so this applies to the VEX forms alone.
+    """
+    out = []
+    for ext, _, _, _ in _widths(only):
+        for form in ("M", "P"):
+            out.append(_macroop("%s_%s_%s_I" % (name, ext, form), [
+                '    fault "std::make_shared<InvalidOpcode>()"']))
     return "".join(out)
 
 
