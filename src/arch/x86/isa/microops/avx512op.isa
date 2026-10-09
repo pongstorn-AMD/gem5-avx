@@ -271,6 +271,30 @@ let {{
             }
         '''
 
+    class gem5_mask_add_epi8(AVX512Op):
+        op_class = 'SimdAddOp'
+        code = '''
+            VecDestReg_sb = { 0 };
+            int count = zmmOp() ? 64 : (ymmOp() ? 32 : 16);
+            for(int i=0; i<count; i++) {
+                VecDestReg_sb[i] = ( bits(OpWriteMask, i) ) ?
+                            (VecSrcReg1_sb[i] + VecSrcReg2_sb[i]) :
+                            ((zeroing) ? (0) : (VecSrcReg3_sb[i]));
+            }
+        '''
+
+    class gem5_mask_add_epi16(AVX512Op):
+        op_class = 'SimdAddOp'
+        code = '''
+            VecDestReg_sw = { 0 };
+            int count = zmmOp() ? 32 : (ymmOp() ? 16 : 8);
+            for(int i=0; i<count; i++) {
+                VecDestReg_sw[i] = ( bits(OpWriteMask, i) ) ?
+                            (VecSrcReg1_sw[i] + VecSrcReg2_sw[i]) :
+                            ((zeroing) ? (0) : (VecSrcReg3_sw[i]));
+            }
+        '''
+
     class gem5_mask_add_epi32(AVX512Op):
         op_class = 'SimdAddOp'
         code = '''
@@ -340,6 +364,30 @@ let {{
                 VecDestReg_sqw[i] = ( bits(OpWriteMask, i) ) ?
                             (VecSrcReg1_sqw[i] - VecSrcReg2_sqw[i]) :
                             ((zeroing) ? (0) : (VecSrcReg3_sqw[i]));
+            }
+        '''
+
+    class gem5_mask_sub_epu8(AVX512Op):
+        op_class = 'SimdAddOp'
+        code = '''
+            VecDestReg_ub = { 0 };
+            int count = zmmOp() ? 64 : (ymmOp() ? 32 : 16);
+            for(int i=0; i<count; i++) {
+                VecDestReg_ub[i] = ( bits(OpWriteMask, i) ) ?
+                            (VecSrcReg1_ub[i] - VecSrcReg2_ub[i]) :
+                            ((zeroing) ? (0) : (VecSrcReg3_ub[i]));
+            }
+        '''
+
+    class gem5_mask_sub_epu16(AVX512Op):
+        op_class = 'SimdAddOp'
+        code = '''
+            VecDestReg_uw = { 0 };
+            int count = zmmOp() ? 32 : (ymmOp() ? 16 : 8);
+            for(int i=0; i<count; i++) {
+                VecDestReg_uw[i] = ( bits(OpWriteMask, i) ) ?
+                            (VecSrcReg1_uw[i] - VecSrcReg2_uw[i]) :
+                            ((zeroing) ? (0) : (VecSrcReg3_uw[i]));
             }
         '''
 

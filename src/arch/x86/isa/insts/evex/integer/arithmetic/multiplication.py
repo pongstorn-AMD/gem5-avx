@@ -225,3 +225,10 @@ def macroop EVEX_VPMULDQ_ZMM_ZMM_P {
 };
 
 '''
+
+# The word multiplies. See macroop_gen.py.
+from ...macroop_gen import binop
+
+microcode += binop("EVEX_VPMULLW", "gem5_avx_mullo_epi16", 2)
+microcode += binop("EVEX_VPMULHW", "gem5_avx_mulhi_epi16", 2)
+microcode += binop("EVEX_VPMULHUW", "gem5_avx_mulhi_epu16", 2)

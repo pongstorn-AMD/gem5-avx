@@ -358,12 +358,12 @@
 
             0x1F: decode EVEX_P {
                 0x1: decode OPCODE_OP_BOTTOM3 {
-                    0x0: EvexMultiInst_EVEX_VPSUBB_Vx_Hx_Wx_Kv();
-                    0x1: EvexMultiInst_EVEX_VPSUBW_Vx_Hx_Wx_Kv();
+                    0x0: EvexMultiInst::EVEX_VPSUBB(EVEX_LL, [Vx,Hx,Wx,Kv]);
+                    0x1: EvexMultiInst::EVEX_VPSUBW(EVEX_LL, [Vx,Hx,Wx,Kv]);
                     0x2: EvexMultiInst::EVEX_VPSUBD(EVEX_LL, [Vx,Hx,Wx,Kv]);
                     0x3: EvexMultiInst::EVEX_VPSUBQ(EVEX_LL, [Vx,Hx,Wx,Kv]);
-                    0x4: EvexMultiInst_EVEX_VPADDB_Vx_Hx_Wx_Kv();
-                    0x5: EvexMultiInst_EVEX_VPADDW_Vx_Hx_Wx_Kv();
+                    0x4: EvexMultiInst::EVEX_VPADDB(EVEX_LL, [Vx,Hx,Wx,Kv]);
+                    0x5: EvexMultiInst::EVEX_VPADDW(EVEX_LL, [Vx,Hx,Wx,Kv]);
                     0x6: EvexMultiInst::EVEX_VPADDD(EVEX_LL, [Vx,Hx,Wx,Kv]);
                     default: Inst::UD2();
                 }

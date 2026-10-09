@@ -135,3 +135,16 @@ def macroop EVEX_VPADDD_ZMM_ZMM_P_K {
 };
 
 '''
+
+# The byte and word forms are the dword form above with a different element
+# size, so they are generated rather than written out. See macroop_gen.py.
+from ...macroop_gen import binop
+
+microcode += binop("EVEX_VPADDB", "gem5_avx_add_epu8", 1,
+                   "gem5_mask_add_epi8")
+microcode += binop("EVEX_VPADDW", "gem5_avx_add_epu16", 2,
+                   "gem5_mask_add_epi16")
+
+# Saturating byte adds, signed and unsigned.
+microcode += binop("EVEX_VPADDSB", "gem5_avx_adds_epi8", 1)
+microcode += binop("EVEX_VPADDUSB", "gem5_avx_adds_epu8", 1)

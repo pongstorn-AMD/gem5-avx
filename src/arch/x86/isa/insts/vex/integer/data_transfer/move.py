@@ -83,6 +83,17 @@ def macroop VEX_KMOVW_R_P {
     fault "std::make_shared<UnimpInstFault>()"
 };
 
+def macroop VEX_KMOVD_M_K {
+    gem5_movefrom_opmask t1, k, size=4, ext=0
+    st t1, seg, sib, disp, dataSize=4
+};
+
+def macroop VEX_KMOVD_P_K {
+    gem5_movefrom_opmask t1, k, size=4, ext=0
+    rdip t7
+    st t1, seg, riprel, disp, dataSize=4
+};
+
 def macroop VEX_KMOVD_K_K {
     gem5_moveto_opmask k, km, size=4, ext=1
 };
@@ -112,6 +123,17 @@ def macroop VEX_KMOVD_R_M {
 
 def macroop VEX_KMOVD_R_P {
     fault "std::make_shared<UnimpInstFault>()"
+};
+
+def macroop VEX_KMOVQ_M_K {
+    gem5_movefrom_opmask t1, k, size=8, ext=0
+    st t1, seg, sib, disp, dataSize=8
+};
+
+def macroop VEX_KMOVQ_P_K {
+    gem5_movefrom_opmask t1, k, size=8, ext=0
+    rdip t7
+    st t1, seg, riprel, disp, dataSize=8
 };
 
 def macroop VEX_KMOVQ_K_K {

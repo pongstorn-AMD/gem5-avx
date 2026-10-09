@@ -194,3 +194,14 @@ def macroop EVEX_VPSUBB_YMM_YMM_P {
     gem5_avx_sub_epu8 ymm1, ymm2, uvec1, size=1, ext=YMM
 };
 '''
+
+# See macroop_gen.py. VPSUBB's 256-bit forms are written out above, so only
+# its other two widths are generated here.
+from ...macroop_gen import binop
+
+microcode += binop("EVEX_VPSUBB", "gem5_avx_sub_epu8", 1,
+                   "gem5_mask_sub_epu8", only=["XMM", "ZMM"])
+microcode += binop("EVEX_VPSUBB", "gem5_avx_sub_epu8", 1,
+                   "gem5_mask_sub_epu8", only=["YMM"], plain=False)
+microcode += binop("EVEX_VPSUBW", "gem5_avx_sub_epu16", 2,
+                   "gem5_mask_sub_epu16")

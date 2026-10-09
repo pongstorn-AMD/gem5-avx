@@ -450,3 +450,8 @@ def macroop EVEX_VPCMPUQ_K_ZMM_P_I {
 };
 
 '''
+
+# The AVX512BW signed byte compare. See macroop_gen.py.
+from ...macroop_gen import cmp_to_mask
+
+microcode += cmp_to_mask("EVEX_VPCMPGTB", "gem5_evex_cmpgt_epi8", 1)
