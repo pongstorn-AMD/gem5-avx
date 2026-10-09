@@ -737,7 +737,12 @@ class VecRegOperand(Operand):
         else:
             rindex = '%d' % self.dest_reg_idx
 
-        c_readw = '\t\t%s& tmp_d%s = xc->%s(this, %s);\n'\
+        # A copy of the destination register, not a reference to it. An
+        # instruction whose destination is also one of its sources is
+        # otherwise reading back what it has already written: "vaddss %xmm2,
+        # %xmm1, %xmm1" clears its destination first and then finds xmm1
+        # zeroed. makeWrite puts the copy back at the end.
+        c_readw = '\t\t%s tmp_d%s = xc->%s(this, %s);\n'\
                 % ('TheISA::VecRegContainer', rindex, func, rindex)
         if self.elemExt:
             c_readw += '\t\tauto %s = tmp_d%s.as<%s>();\n' % (self.base_name,
@@ -801,10 +806,11 @@ class VecRegOperand(Operand):
             return self.buildWriteCode(func)
 
         wb = '''
+        xc->%s(this, %d, tmp_d%d);
         if (traceData) {
             traceData->setData(tmp_d%d);
         }
-        ''' % self.dest_reg_idx
+        ''' % (func, self.dest_reg_idx, self.dest_reg_idx, self.dest_reg_idx)
         return wb
 
     def finalize(self, predRead, predWrite):
