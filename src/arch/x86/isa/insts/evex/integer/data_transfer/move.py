@@ -700,7 +700,7 @@ def macroop EVEX_VMOVDQU64_P_ZMM_K {
 };
 
 def macroop EVEX_VPCOMPRESSD_XMM_XMM {
-    gem5_avx_move_epu32 xmm, xmmm, size=4, ext=XMM
+    gem5_avx_move_epu32 xmmm, xmm, size=4, ext=XMM
 };
 
 def macroop EVEX_VPCOMPRESSD_XMM_M {
@@ -721,7 +721,7 @@ def macroop EVEX_VPCOMPRESSD_P_XMM {
 };
 
 def macroop EVEX_VPCOMPRESSD_YMM_YMM {
-    gem5_avx_move_epu32 ymm, ymmm, size=4, ext=YMM
+    gem5_avx_move_epu32 ymmm, ymm, size=4, ext=YMM
 };
 
 def macroop EVEX_VPCOMPRESSD_YMM_M {
@@ -742,7 +742,7 @@ def macroop EVEX_VPCOMPRESSD_P_YMM {
 };
 
 def macroop EVEX_VPCOMPRESSD_ZMM_ZMM {
-    gem5_avx_move_epu32 zmm, zmmm, size=4, ext=ZMM
+    gem5_avx_move_epu32 zmmm, zmm, size=4, ext=ZMM
 };
 
 def macroop EVEX_VPCOMPRESSD_ZMM_M {
@@ -763,7 +763,7 @@ def macroop EVEX_VPCOMPRESSD_P_ZMM {
 };
 
 def macroop EVEX_VPCOMPRESSQ_XMM_XMM {
-    gem5_avx_move_epu64 xmm, xmmm, size=8, ext=XMM
+    gem5_avx_move_epu64 xmmm, xmm, size=8, ext=XMM
 };
 
 def macroop EVEX_VPCOMPRESSQ_XMM_M {
@@ -784,7 +784,7 @@ def macroop EVEX_VPCOMPRESSQ_P_XMM {
 };
 
 def macroop EVEX_VPCOMPRESSQ_YMM_YMM {
-    gem5_avx_move_epu64 ymm, ymmm, size=8, ext=YMM
+    gem5_avx_move_epu64 ymmm, ymm, size=8, ext=YMM
 };
 
 def macroop EVEX_VPCOMPRESSQ_YMM_M {
@@ -805,7 +805,7 @@ def macroop EVEX_VPCOMPRESSQ_P_YMM {
 };
 
 def macroop EVEX_VPCOMPRESSQ_ZMM_ZMM {
-    gem5_avx_move_epu64 zmm, zmmm, size=8, ext=ZMM
+    gem5_avx_move_epu64 zmmm, zmm, size=8, ext=ZMM
 };
 
 def macroop EVEX_VPCOMPRESSQ_ZMM_M {
@@ -826,7 +826,7 @@ def macroop EVEX_VPCOMPRESSQ_P_ZMM {
 };
 
 def macroop EVEX_VPCOMPRESSD_XMM_XMM_K {
-    gem5_mask_compress_epi32 xmm, xmmm, opmask=opmask, src2=xmm, size=4, ext=XMM
+    gem5_mask_compress_epi32 xmmm, xmm, opmask=opmask, src2=xmmm, size=4, ext=XMM
 };
 
 def macroop EVEX_VPCOMPRESSD_XMM_M_K {
@@ -847,7 +847,7 @@ def macroop EVEX_VPCOMPRESSD_P_XMM_K {
 };
 
 def macroop EVEX_VPCOMPRESSD_YMM_YMM_K {
-    gem5_mask_compress_epi32 ymm, ymmm, opmask=opmask, src2=ymm, size=4, ext=YMM
+    gem5_mask_compress_epi32 ymmm, ymm, opmask=opmask, src2=ymmm, size=4, ext=YMM
 };
 
 def macroop EVEX_VPCOMPRESSD_YMM_M_K {
@@ -868,7 +868,7 @@ def macroop EVEX_VPCOMPRESSD_P_YMM_K {
 };
 
 def macroop EVEX_VPCOMPRESSD_ZMM_ZMM_K {
-    gem5_mask_compress_epi32 zmm, zmmm, opmask=opmask, src2=zmm, size=4, ext=ZMM
+    gem5_mask_compress_epi32 zmmm, zmm, opmask=opmask, src2=zmmm, size=4, ext=ZMM
 };
 
 def macroop EVEX_VPCOMPRESSD_ZMM_M_K {
@@ -889,7 +889,7 @@ def macroop EVEX_VPCOMPRESSD_P_ZMM_K {
 };
 
 def macroop EVEX_VPCOMPRESSQ_XMM_XMM_K {
-    gem5_mask_compress_epi64 xmm, xmmm, opmask=opmask, src2=xmm, size=8, ext=XMM
+    gem5_mask_compress_epi64 xmmm, xmm, opmask=opmask, src2=xmmm, size=8, ext=XMM
 };
 
 def macroop EVEX_VPCOMPRESSQ_XMM_M_K {
@@ -910,7 +910,7 @@ def macroop EVEX_VPCOMPRESSQ_P_XMM_K {
 };
 
 def macroop EVEX_VPCOMPRESSQ_YMM_YMM_K {
-    gem5_mask_compress_epi64 ymm, ymmm, opmask=opmask, src2=ymm, size=8, ext=YMM
+    gem5_mask_compress_epi64 ymmm, ymm, opmask=opmask, src2=ymmm, size=8, ext=YMM
 };
 
 def macroop EVEX_VPCOMPRESSQ_YMM_M_K {
@@ -931,7 +931,7 @@ def macroop EVEX_VPCOMPRESSQ_P_YMM_K {
 };
 
 def macroop EVEX_VPCOMPRESSQ_ZMM_ZMM_K {
-    gem5_mask_compress_epi64 zmm, zmmm, opmask=opmask, src2=zmm, size=8, ext=ZMM
+    gem5_mask_compress_epi64 zmmm, zmm, opmask=opmask, src2=zmmm, size=8, ext=ZMM
 };
 
 def macroop EVEX_VPCOMPRESSQ_ZMM_M_K {

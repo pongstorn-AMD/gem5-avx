@@ -119,4 +119,51 @@ def macroop EVEX_VGETEXPPD_ZMM_P {
     gem5_avx_getexp_pd zmm, uvec1, size=8, ext=ZMM
 };
 
+# VCVTPS2PD widens, so its source is half the width of its destination and
+# the memory forms load half as much.
+def macroop EVEX_VCVTPS2PD_XMM_XMM {
+    gem5_avx_cvt_ps2pd xmm, xmmm, srcSize=4, destSize=8, ext=XMM
+};
+
+def macroop EVEX_VCVTPS2PD_XMM_M {
+    ldvec128 uvec1, seg, sib, "DISPLACEMENT", dataSize=16
+    gem5_avx_cvt_ps2pd xmm, uvec1, srcSize=4, destSize=8, ext=XMM
+};
+
+def macroop EVEX_VCVTPS2PD_XMM_P {
+    rdip t7
+    ldvec128 uvec1, seg, riprel, "DISPLACEMENT", dataSize=16
+    gem5_avx_cvt_ps2pd xmm, uvec1, srcSize=4, destSize=8, ext=XMM
+};
+
+def macroop EVEX_VCVTPS2PD_YMM_XMM {
+    gem5_avx_cvt_ps2pd ymm, xmmm, srcSize=4, destSize=8, ext=YMM
+};
+
+def macroop EVEX_VCVTPS2PD_YMM_M {
+    ldvec128 uvec1, seg, sib, "DISPLACEMENT", dataSize=16
+    gem5_avx_cvt_ps2pd ymm, uvec1, srcSize=4, destSize=8, ext=YMM
+};
+
+def macroop EVEX_VCVTPS2PD_YMM_P {
+    rdip t7
+    ldvec128 uvec1, seg, riprel, "DISPLACEMENT", dataSize=16
+    gem5_avx_cvt_ps2pd ymm, uvec1, srcSize=4, destSize=8, ext=YMM
+};
+
+def macroop EVEX_VCVTPS2PD_ZMM_YMM {
+    gem5_avx_cvt_ps2pd zmm, ymmm, srcSize=4, destSize=8, ext=ZMM
+};
+
+def macroop EVEX_VCVTPS2PD_ZMM_M {
+    ldvec256 uvec1, seg, sib, "DISPLACEMENT", dataSize=32
+    gem5_avx_cvt_ps2pd zmm, uvec1, srcSize=4, destSize=8, ext=ZMM
+};
+
+def macroop EVEX_VCVTPS2PD_ZMM_P {
+    rdip t7
+    ldvec256 uvec1, seg, riprel, "DISPLACEMENT", dataSize=32
+    gem5_avx_cvt_ps2pd zmm, uvec1, srcSize=4, destSize=8, ext=ZMM
+};
+
 '''

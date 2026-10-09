@@ -763,7 +763,8 @@ let {{
             VecDestReg_uqw = { 0 };
             int count = zmmOp() ? 8 : (ymmOp() ? 4 : 2);
             for(int i=0; i<count; i++)
-                VecDestReg_uqw[i] = VecSrcReg1_udw[i*2] * VecSrcReg2_udw[i*2];
+                VecDestReg_uqw[i] = (uint64_t) VecSrcReg1_udw[i*2] *
+                                    (uint64_t) VecSrcReg2_udw[i*2];
         '''
 
     class gem5_avx_mul_epi64(AVXOp):
@@ -772,8 +773,8 @@ let {{
             VecDestReg_sqw = { 0 };
             int count = zmmOp() ? 8 : (ymmOp() ? 4 : 2);
             for(int i=0; i<count; i++)
-                VecDestReg_sqw[i] = (int64_t) VecSrcReg1_udw[i*2] *
-                                    (int64_t) VecSrcReg2_udw[i*2];
+                VecDestReg_sqw[i] = (int64_t) VecSrcReg1_sdw[i*2] *
+                                    (int64_t) VecSrcReg2_sdw[i*2];
         '''
 
     class gem5_avx_mullo_epi16(AVXOp):
@@ -1524,7 +1525,8 @@ let {{
             float ftemp = VecSrcReg2_sf[0];
             for(int i=0; i<scale_factor; i++) ftemp *= 2;
             switch(RoundMode) {
-            case 0: ftemp = ceil(ftemp/2) * 2; break;
+            // Round to nearest, ties to even.
+            case 0: ftemp = nearbyintf(ftemp); break;
             case 1: ftemp = floor(ftemp); break;
             case 2: ftemp = ceil(ftemp); break;
             case 3: ftemp = (ftemp < 0.0) ? ceil(ftemp) : floor(ftemp); break;
@@ -1547,7 +1549,8 @@ let {{
             double dtemp = VecSrcReg2_df[0];
             for(int i=0; i<scale_factor; i++) dtemp *= 2;
             switch(RoundMode) {
-            case 0: dtemp = ceil(dtemp/2) * 2; break;
+            // Round to nearest, ties to even.
+            case 0: dtemp = nearbyint(dtemp); break;
             case 1: dtemp = floor(dtemp); break;
             case 2: dtemp = ceil(dtemp); break;
             case 3: dtemp = (dtemp < 0.0) ? ceil(dtemp) : floor(dtemp); break;
@@ -1575,7 +1578,8 @@ let {{
                 float ftemp = VecSrcReg1_sf[i];
                 for(int j=0; j<scale_factor; j++) ftemp *= 2;
                 switch(RoundMode) {
-                case 0: ftemp = ceil(ftemp/2) * 2; break;
+                // Round to nearest, ties to even.
+                case 0: ftemp = nearbyintf(ftemp); break;
                 case 1: ftemp = floor(ftemp); break;
                 case 2: ftemp = ceil(ftemp); break;
                 case 3: ftemp = (ftemp < 0.0) ? ceil(ftemp) : floor(ftemp); break;
@@ -1602,7 +1606,8 @@ let {{
                 double dtemp = VecSrcReg1_df[i];
                 for(int j=0; j<scale_factor; j++) dtemp *= 2;
                 switch(RoundMode) {
-                case 0: dtemp = ceil(dtemp/2) * 2; break;
+                // Round to nearest, ties to even.
+                case 0: dtemp = nearbyint(dtemp); break;
                 case 1: dtemp = floor(dtemp); break;
                 case 2: dtemp = ceil(dtemp); break;
                 case 3: dtemp = (dtemp < 0.0) ? ceil(dtemp) : floor(dtemp); break;
@@ -3502,6 +3507,20 @@ let {{
                 VecDestReg_sf[i] = (float) VecSrcReg1_udw[i];
         '''
 
+    class gem5_avx_cvt_ps2pd(AVXOp):
+        op_class = 'SimdFloatCvtOp'
+        def __init__(self, dest, src, \
+                size = None, destSize = None, srcSize = None, ext = None):
+            super(gem5_avx_cvt_ps2pd, self).__init__(dest, src, \
+                    "InstRegIndex(0)", "InstRegIndex(0)", \
+                    size, destSize, srcSize, ext)
+        code = '''
+            VecDestReg_df = { 0 };
+            int count = zmmOp() ? 8 : (ymmOp() ? 4 : 2);
+            for(int i=0; i<count; i++)
+                VecDestReg_df[i] = (double) VecSrcReg1_sf[i];
+        '''
+
     class gem5_avx_cvtepu32_pd(AVXOp):
         op_class = 'SimdFloatCvtOp'
         def __init__(self, dest, src, \
@@ -5018,7 +5037,7 @@ let {{
             int count = zmmOp() ? 64 : (ymmOp() ? 32 : 16);
             for(int i=0; i<count; i++) {
                 if( bits(VecSrcReg1_ub[i], 7) )
-                    OpMaskDestReg |= (1 << i);
+                    OpMaskDestReg |= (ULL(1) << i);
             }
         '''
 
@@ -5033,8 +5052,8 @@ let {{
             OpMaskDestReg = 0;
             int count = zmmOp() ? 32 : (ymmOp() ? 16 : 8);
             for(int i=0; i<count; i++) {
-                if( bits(VecSrcReg1_uw[i], 16) )
-                    OpMaskDestReg |= (1 << i);
+                if( bits(VecSrcReg1_uw[i], 15) )
+                    OpMaskDestReg |= (ULL(1) << i);
             }
         '''
 
@@ -5050,7 +5069,7 @@ let {{
             int count = zmmOp() ? 16 : (ymmOp() ? 8 : 4);
             for(int i=0; i<count; i++) {
                 if( bits(VecSrcReg1_udw[i], 31) )
-                    OpMaskDestReg |= (1 << i);
+                    OpMaskDestReg |= (ULL(1) << i);
             }
         '''
 
@@ -5066,7 +5085,7 @@ let {{
             int count = zmmOp() ? 8 : (ymmOp() ? 4 : 2);
             for(int i=0; i<count; i++) {
                 if( bits(VecSrcReg1_uqw[i], 63) )
-                    OpMaskDestReg |= (1 << i);
+                    OpMaskDestReg |= (ULL(1) << i);
             }
         '''
 
