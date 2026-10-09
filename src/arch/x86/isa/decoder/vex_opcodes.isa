@@ -265,10 +265,8 @@ format WarnUnimpl {
                         default: Inst::UD2();
                     }
                 }
-                0x6: decode VEX_W {
-                    0x0: VexMultiInst::VEX_VFMADDSUB132PS(VEX_L, [Vx,Hx,Wx]);
-                    0x1: VexMultiInst::VEX_VFMADDSUB132PD(VEX_L, [Vx,Hx,Wx]);
-                }
+                // The FMADDSUB132 forms used to be listed here, in the 0F
+                // map. They are 0F38 instructions and are decoded there.
                 0x7: decode VEX_W {
                     0x0: VexMultiInst::VEX_VFMSUBADD132PS(VEX_L, [Vx,Hx,Wx]);
                     0x1: VexMultiInst::VEX_VFMSUBADD132PD(VEX_L, [Vx,Hx,Wx]);
@@ -298,7 +296,7 @@ format WarnUnimpl {
                     default: Inst::UD2();
                 }
                 0x2: decode OPCODE_OP_BOTTOM3 {
-                    0x2: vcmpss_Vss_Hss_Wss_Ib();
+                    0x2: Inst::VEX_VCMPSS(Vss,Hss,Wss,Ib);
                     default: Inst::UD2();
                 }
                 0x3: decode OPCODE_OP_BOTTOM3 {
@@ -327,7 +325,7 @@ format WarnUnimpl {
                     default: Inst::UD2();
                 }
                 0x3: decode OPCODE_OP_BOTTOM3 {
-                    0x0: vaddsubps_Vps_Hps_Wps();
+                    0x0: VexMultiInst::VEX_VADDSUBPS(VEX_L, [Vps,Hps,Wps]);
                     0x6: movdq2q_Pq_Uq();
                     default: Inst::UD2();
                 }
@@ -362,7 +360,7 @@ format WarnUnimpl {
                     0x2: VexMultiInst::VEX_VPSLLD(VEX_L, [Vx,Hx,Wdq]);
                     0x3: VexMultiInst::VEX_VPSLLQ(VEX_L, [Vx,Hx,Wdq]);
                     0x4: VexMultiInst::VEX_VPMULUDQ(VEX_L, [Vx,Hx,Wx]);
-                    0x5: vpmaddwd_Vx_Hx_Wx();
+                    0x5: VexMultiInst::VEX_VPMADDWD(VEX_L, [Vx,Hx,Wx]);
                     0x6: vpsadbw_Vx_Hx_Wx();
                     0x7: vmaskmovdqu_Vdq_Udq();
                     default: Inst::UD2();
@@ -668,12 +666,24 @@ format WarnUnimpl {
                         0x1: VexMultiInst_VEX_VPGATHERQQ_Vx_Hx_Wx();
                     }
                     0x2: decode VEX_W {
-                        0x0: VexMultiInst_VEX_VGATHERDPS_Vx_Hx_Wx();
+                        0x0: VexMultiInst::VEX_VGATHERDPS(VEX_L, [Vx,Hx,Wx]);
                         0x1: VexMultiInst_VEX_VGATHERDPD_Vx_Hx_Wx();
                     }
                     0x3: decode VEX_W {
                         0x0: VexMultiInst_VEX_VGATHERQPS_Vx_Hx_Wx();
                         0x1: VexMultiInst::VEX_VGATHERQPD(VEX_L, [Vx,Hx,Wx]);
+                    }
+                    0x6: decode VEX_W {
+                        0x0: VexMultiInst::VEX_VFMADDSUB132PS(VEX_L,
+                                                              [Vx,Hx,Wx]);
+                        0x1: VexMultiInst::VEX_VFMADDSUB132PD(VEX_L,
+                                                              [Vx,Hx,Wx]);
+                    }
+                    0x7: decode VEX_W {
+                        0x0: VexMultiInst::VEX_VFMSUBADD132PS(VEX_L,
+                                                              [Vx,Hx,Wx]);
+                        0x1: VexMultiInst::VEX_VFMSUBADD132PD(VEX_L,
+                                                              [Vx,Hx,Wx]);
                     }
                     default: Inst::UD2();
                 }
@@ -928,7 +938,7 @@ format WarnUnimpl {
                         default: Inst::UD2();
                     }
                     0x2: VexMultiInst::VEX_VPBLENDD(VEX_L, [Vx,Hx,Wx,Ib]);
-                    0x4: VEX_VPERMILPS_Vx_Wx_Ib();
+                    0x4: VexMultiInst::VEX_VPERMILPS(VEX_L, [Vx,Wx,Ib]);
                     0x5: VexMultiInst::VEX_VPERMILPD(VEX_L, [Vx,Wx,Ib]);
                     0x6: decode VEX_L {
                         0x1: Inst::VEX_VPERM2F128(Vqq,Hqq,Wqq,Ib);
@@ -970,8 +980,8 @@ format WarnUnimpl {
                         default: vpinsrb_Vdq_Hdq_Ry_Ib();
                     }
                     0x1: decode MODRM_MOD {
-                        0x03: Inst::VEX_VINSERTPS(Vdq,Hdq,Md,Ib);
-                        default: Inst::VEX_VINSERTPS(Vdq,Hdq,Udq,Ib);
+                        0x03: Inst::VEX_VINSERTPS(Vdq,Hdq,Udq,Ib);
+                        default: Inst::VEX_VINSERTPS(Vdq,Hdq,Md,Ib);
                     }
                     0x2: decode VEX_W {
                         0x0: Inst::VEX_VPINSRD(Vdq,Hdq,Ey,Ib);
@@ -1067,7 +1077,7 @@ format WarnUnimpl {
 
             0x09: decode VEX_P {
                 0x1: decode OPCODE_OP_BOTTOM3 {
-                    0x2: vblendvps_Vx_Hx_Wx_Lx();
+                    0x2: VexMultiInst::VEX_VBLENDVPS(VEX_L, [Vx,Hx,Wx,Lx]);
                     0x3: VexMultiInst::VEX_VBLENDVPD(VEX_L, [Vx,Hx,Wx,Lx]);
                     0x4: VexMultiInst::VEX_VPBLENDVB(VEX_L, [Vx,Hx,Wx,Lx]);
                     default: Inst::UD2();

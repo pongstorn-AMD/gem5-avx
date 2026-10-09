@@ -617,6 +617,10 @@ format WarnUnimpl {
                     default: Inst::UD2();
                 }
                 0x3: decode OPCODE_OP_BOTTOM3 {
+                    // EVEX.W1 selects VCVTUQQ2PS, which is unimplemented.
+                    0x2: decode EVEX_W {
+                        0x0: EvexMultiInst::EVEX_VCVTUDQ2PS(EVEX_LL, [Vx,Wx]);
+                    }
                     0x3: Inst::EVEX_VCVTUSI2SD(Vsd,Hsd,Ey);
                     0x4: vhaddps_Vps_Hps_Wps();
                     0x5: vhsubps_Vps_Hps_Wps();
@@ -793,9 +797,17 @@ format WarnUnimpl {
                         0x0: EvexMultiInst_EVEX_VGETEXPPS_Vx_Wx();
                         0x1: EvexMultiInst::EVEX_VGETEXPPD(EVEX_LL, [Vx,Wx]);
                     }
-                    0x5: EVEX_VPSRLVD_Vx_Hx_Wx();
-                    0x6: EVEX_VPSRAVD_Vx_Hx_Wx();
-                    0x7: EVEX_VPSLLVD_Vx_Hx_Wx();
+                    // EVEX.W1 selects the quadword forms, which are still
+                    // unimplemented.
+                    0x5: decode EVEX_W {
+                        0x0: EvexMultiInst::EVEX_VPSRLVD(EVEX_LL, [Vx,Hx,Wx]);
+                    }
+                    0x6: decode EVEX_W {
+                        0x0: EvexMultiInst::EVEX_VPSRAVD(EVEX_LL, [Vx,Hx,Wx]);
+                    }
+                    0x7: decode EVEX_W {
+                        0x0: EvexMultiInst::EVEX_VPSLLVD(EVEX_LL, [Vx,Hx,Wx]);
+                    }
                     default: Inst::UD2();
                 }
                 default: Inst::UD2();
@@ -984,7 +996,7 @@ format WarnUnimpl {
             0x09: decode EVEX_P {
                 0x1: decode OPCODE_OP_BOTTOM3 {
                     0x4: decode EVEX_W {
-                        0x0: EvexMultiInst_EVEX_VRCP14PS_Vps_Wps();
+                        0x0: EvexMultiInst::EVEX_VRCP14PS(EVEX_LL, [Vps,Wps]);
                         0x1: EvexMultiInst::EVEX_VRCP14PD(EVEX_LL, [Vpd,Wpd]);
                     }
                     0x5: decode EVEX_W {
@@ -992,7 +1004,8 @@ format WarnUnimpl {
                         0x1: EVEX_VRCP14SD_Vpd_Wpd();
                     }
                     0x6: decode EVEX_W {
-                        0x0: EvexMultiInst_EVEX_VRSQRT14PS_Vps_Wps();
+                        0x0: EvexMultiInst::EVEX_VRSQRT14PS(EVEX_LL,
+                                                             [Vps,Wps]);
                         0x1: EvexMultiInst::EVEX_VRSQRT14PD(EVEX_LL, [Vpd,Wpd]);
                     }
                     0x7: decode EVEX_W {
@@ -1201,8 +1214,8 @@ format WarnUnimpl {
                         default: vpinsrb_Vdq_Hdq_Ry_Ib();
                     }
                     0x1: decode MODRM_MOD {
-                        0x03: Inst::EVEX_VINSERTPS(Vdq,Hdq,Md,Ib);
-                        default: Inst::EVEX_VINSERTPS(Vdq,Hdq,Udq,Ib);
+                        0x03: Inst::EVEX_VINSERTPS(Vdq,Hdq,Udq,Ib);
+                        default: Inst::EVEX_VINSERTPS(Vdq,Hdq,Md,Ib);
                     }
                     0x2: decode EVEX_W {
                         0x0: VPINSRD_Vdq_Hdq_Ey_Ib();

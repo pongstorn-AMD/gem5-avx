@@ -45,3 +45,9 @@ def macroop EVEX_VRCP14PD_ZMM_P {
 };
 
 '''
+
+# The single precision forms. See macroop_gen.py.
+from ...macroop_gen import unop
+
+microcode += unop("EVEX_VRCP14PS", "gem5_avx_rcp14_ps", 4)
+microcode += unop("EVEX_VRSQRT14PS", "gem5_avx_rsqrt14_ps", 4)

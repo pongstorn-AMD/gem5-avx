@@ -971,6 +971,39 @@ let {{
 #                df4_dest_df4[i] = 0.0;
 #        '''
 
+    # The approximation helpers are written for doubles. A double result
+    # rounded to float keeps far more than the 14 bits these instructions
+    # are specified to produce.
+    class gem5_avx_rsqrt14_ps(AVXOp):
+        op_class = 'SimdFloatSqrtOp'
+        def __init__(self, dest, src, \
+                size = None, destSize = None, srcSize = None, ext = None):
+            super(gem5_avx_rsqrt14_ps, self).__init__(dest, src,\
+                    "InstRegIndex(0)", "InstRegIndex(0)", \
+                    size, destSize, srcSize, ext)
+        code = '''
+            VecDestReg_sf = { 0.0 };
+            int count = zmmOp() ? 16 : (ymmOp() ? 8 : 4);
+            for(int i=0; i<count; i++)
+                VecDestReg_sf[i] =
+                        RSQRT14D_APPROXIMATE((double)VecSrcReg1_sf[i]);
+        '''
+
+    class gem5_avx_rcp14_ps(AVXOp):
+        op_class = 'SimdFloatSqrtOp'
+        def __init__(self, dest, src, \
+                size = None, destSize = None, srcSize = None, ext = None):
+            super(gem5_avx_rcp14_ps, self).__init__(dest, src,\
+                    "InstRegIndex(0)", "InstRegIndex(0)", \
+                    size, destSize, srcSize, ext)
+        code = '''
+            VecDestReg_sf = { 0.0 };
+            int count = zmmOp() ? 16 : (ymmOp() ? 8 : 4);
+            for(int i=0; i<count; i++)
+                VecDestReg_sf[i] =
+                        RCP14D_APPROXIMATE((double)VecSrcReg1_sf[i]);
+        '''
+
     class gem5_avx_rsqrt14_pd(AVXOp):
         op_class = 'SimdFloatSqrtOp'
         def __init__(self, dest, src, \
@@ -2016,6 +2049,55 @@ let {{
             VecDestReg_uqw[1] = *((uint64_t *) &VecSrcReg1_df[1]);
         '''
 
+    class gem5_avx_cmp_ss(AVXOp):
+        op_class = 'SimdFloatCvtOp'
+        code = '''
+            int sizeBits = srcSize * 8;
+            float arg1 = VecSrcReg1_sf[0];
+            float arg2 = VecSrcReg2_sf[0];
+            bool nanop = std::isnan(arg1) || std::isnan(arg2);
+            uint32_t resBits = 0;
+            switch( ext & mask(3)) {
+            case 0x0:
+                if( arg1 == arg2 && !nanop )
+                    resBits = mask(sizeBits);
+                break;
+            case 0x1:
+                if( arg1 < arg2 && !nanop )
+                    resBits = mask(sizeBits);
+                break;
+            case 0x2:
+                if( arg1 <= arg2 && !nanop )
+                    resBits = mask(sizeBits);
+                break;
+            case 0x3:
+                if( nanop )
+                    resBits = mask(sizeBits);
+                break;
+            case 0x4:
+                if (arg1 != arg2 || nanop)
+                    resBits = mask(sizeBits);
+                break;
+            case 0x5:
+                if (!(arg1 < arg2) || nanop)
+                    resBits = mask(sizeBits);
+                break;
+            case 0x6:
+                if (!(arg1 <= arg2) || nanop)
+                    resBits = mask(sizeBits);
+                break;
+            case 0x7:
+                if (!nanop)
+                    resBits = mask(sizeBits);
+                break;
+            };
+            VecDestReg_udw = { 0 };
+            VecDestReg_udw[0] = resBits;
+            // The upper lanes come from the first source, not from zero.
+            for(int i=1; i<4; i++)
+                VecDestReg_udw[i] = *((uint32_t *) &VecSrcReg1_sf[i]);
+        '''
+
     class gem5_avx_cmp_ps(AVXOp):
         op_class = 'SimdFloatCvtOp'
         code = '''
@@ -2453,6 +2535,46 @@ let {{
                 int count = zmmOp() ? 16 : (ymmOp() ? 8 : 4);
                 for(int i=0; i<count; i++)
                     VecDestReg_udw[i] = VecSrcReg1_udw[i] << shiftAmt;
+            }
+        '''
+
+    # The variable shifts take a count per element rather than one count for
+    # the whole register, and a count at or past the element width produces
+    # zero instead of being ignored.
+    class gem5_avx_sllv_epu32(AVXOp):
+        op_class = 'SimdShiftOp'
+        code = '''
+            VecDestReg_udw = { 0 };
+            int count = zmmOp() ? 16 : (ymmOp() ? 8 : 4);
+            for(int i=0; i<count; i++) {
+                uint32_t shiftAmt = VecSrcReg2_udw[i];
+                VecDestReg_udw[i] = (shiftAmt < 32)
+                                  ? (VecSrcReg1_udw[i] << shiftAmt) : 0;
+            }
+        '''
+
+    class gem5_avx_srlv_epu32(AVXOp):
+        op_class = 'SimdShiftOp'
+        code = '''
+            VecDestReg_udw = { 0 };
+            int count = zmmOp() ? 16 : (ymmOp() ? 8 : 4);
+            for(int i=0; i<count; i++) {
+                uint32_t shiftAmt = VecSrcReg2_udw[i];
+                VecDestReg_udw[i] = (shiftAmt < 32)
+                                  ? (VecSrcReg1_udw[i] >> shiftAmt) : 0;
+            }
+        '''
+
+    class gem5_avx_srav_epi32(AVXOp):
+        op_class = 'SimdShiftOp'
+        code = '''
+            VecDestReg_sdw = { 0 };
+            int count = zmmOp() ? 16 : (ymmOp() ? 8 : 4);
+            for(int i=0; i<count; i++) {
+                uint32_t shiftAmt = VecSrcReg2_udw[i];
+                int32_t arg = VecSrcReg1_sdw[i];
+                VecDestReg_sdw[i] = (shiftAmt < 32) ? (arg >> shiftAmt)
+                                  : ((arg < 0) ? -1 : 0);
             }
         '''
 
@@ -3835,7 +3957,8 @@ let {{
             VecDestReg_udw = { 0 };
             int count = zmmOp() ? 16 : (ymmOp() ? 8 : 4);
             for(int i=0; i<count; i++) {
-                int index = (ext >> (i & mask(2))) & mask(2);
+                // Each lane's two-bit selector, within its 128-bit lane.
+                int index = (ext >> ((i & mask(2)) * 2)) & mask(2);
                 VecDestReg_udw[i] = VecSrcReg1_udw[(i & 0xFC) + index];
             }
         '''

@@ -359,3 +359,7 @@ def macroop EVEX_VPALIGNR_ZMM_ZMM_P_I {
 from ...macroop_gen import shift_imm
 
 microcode += shift_imm("EVEX_VPSRLW", "gem5_avx_srl_epu16_imm", 2)
+
+from ...macroop_gen import binop
+
+microcode += binop("EVEX_VPSRLVD", "gem5_avx_srlv_epu32", 4)
