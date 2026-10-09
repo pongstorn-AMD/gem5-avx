@@ -84,3 +84,46 @@ def macroop VEX_VPMULUDQ_YMM_YMM_P {
 };
 
 '''
+
+# The word multiplies. See macroop_gen.py.
+from ...macroop_gen import binop
+
+microcode += binop("VEX_VPMULLW", "gem5_avx_mullo_epi16", 2)
+microcode += binop("VEX_VPMULHW", "gem5_avx_mulhi_epi16", 2)
+microcode += binop("VEX_VPMULHUW", "gem5_avx_mulhi_epu16", 2)
+microcode += binop("VEX_VPMULHRSW", "gem5_avx_mulhrs_epi16", 2)
+
+# VPMULDQ widens, so its sources and destination differ in element size and
+# the generator's single size does not describe it.
+microcode += '''
+def macroop VEX_VPMULDQ_XMM_XMM_XMM {
+    gem5_avx_mul_epi64 xmm1, xmm2, xmmm, srcSize=4, destSize=8, ext=XMM
+};
+
+def macroop VEX_VPMULDQ_XMM_XMM_M {
+    ldvec128 uvec1, seg, sib, "DISPLACEMENT", dataSize=16
+    gem5_avx_mul_epi64 xmm1, xmm2, uvec1, srcSize=4, destSize=8, ext=XMM
+};
+
+def macroop VEX_VPMULDQ_XMM_XMM_P {
+    rdip t7
+    ldvec128 uvec1, seg, riprel, "DISPLACEMENT", dataSize=16
+    gem5_avx_mul_epi64 xmm1, xmm2, uvec1, srcSize=4, destSize=8, ext=XMM
+};
+
+def macroop VEX_VPMULDQ_YMM_YMM_YMM {
+    gem5_avx_mul_epi64 ymm1, ymm2, ymmm, srcSize=4, destSize=8, ext=YMM
+};
+
+def macroop VEX_VPMULDQ_YMM_YMM_M {
+    ldvec256 uvec1, seg, sib, "DISPLACEMENT", dataSize=32
+    gem5_avx_mul_epi64 ymm1, ymm2, uvec1, srcSize=4, destSize=8, ext=YMM
+};
+
+def macroop VEX_VPMULDQ_YMM_YMM_P {
+    rdip t7
+    ldvec256 uvec1, seg, riprel, "DISPLACEMENT", dataSize=32
+    gem5_avx_mul_epi64 ymm1, ymm2, uvec1, srcSize=4, destSize=8, ext=YMM
+};
+
+'''

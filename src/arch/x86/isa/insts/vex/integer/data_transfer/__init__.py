@@ -34,7 +34,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 categories = ["move",
-#              "move_non_temporal",
+              "move_non_temporal",
               "move_mask",
               "gather_scatter"]
 

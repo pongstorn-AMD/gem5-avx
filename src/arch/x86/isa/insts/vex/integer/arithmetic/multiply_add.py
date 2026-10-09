@@ -60,3 +60,8 @@ def macroop VEX_VPMADDWD_YMM_P {
 };
 
 '''
+
+# VPMADDUBSW multiplies unsigned bytes by signed bytes. See macroop_gen.py.
+from ...macroop_gen import binop
+
+microcode += binop("VEX_VPMADDUBSW", "gem5_avx_maddubs_epi16", 2)

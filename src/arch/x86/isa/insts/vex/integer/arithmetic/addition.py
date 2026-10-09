@@ -59,3 +59,18 @@ def macroop VEX_VPADDQ_YMM_YMM_P {
     gem5_avx_add_epu64 ymm1, ymm2, uvec1, size=8, ext=YMM
 };
 '''
+
+# The byte and word adds, plain and saturating. See macroop_gen.py.
+from ...macroop_gen import binop
+
+microcode += binop("VEX_VPADDB", "gem5_avx_add_epu8", 1)
+microcode += binop("VEX_VPADDW", "gem5_avx_add_epu16", 2)
+microcode += binop("VEX_VPADDSB", "gem5_avx_adds_epi8", 1)
+microcode += binop("VEX_VPADDSW", "gem5_avx_adds_epi16", 2)
+microcode += binop("VEX_VPADDUSB", "gem5_avx_adds_epu8", 1)
+microcode += binop("VEX_VPADDUSW", "gem5_avx_adds_epu16", 2)
+
+# The horizontal adds, which pair up neighbours within each 128-bit lane.
+microcode += binop("VEX_VPHADDW", "gem5_avx_hadd_epi16", 2)
+microcode += binop("VEX_VPHADDSW", "gem5_avx_hadds_epi16", 2)
+microcode += binop("VEX_VPHADDD", "gem5_avx_hadd_epi32", 4)

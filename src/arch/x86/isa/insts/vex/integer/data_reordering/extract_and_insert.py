@@ -118,4 +118,82 @@ def macroop VEX_VEXTRACTI64X2_P_YMM_I {
     stvec128 uvec1, seg, riprel, disp, dataSize=16
 };
 
+def macroop VEX_VPEXTRB_R_XMM_I {
+    gem5_mm_extract_epi8 reg, xmmm, "IMMEDIATE & mask(4)", size=1, ext=0
+};
+
+def macroop VEX_VPEXTRB_M_XMM_I {
+    gem5_mm_extract_epi8 t1, xmm, "IMMEDIATE & mask(4)", size=1, ext=0
+    st t1, seg, sib, disp, dataSize=1
+};
+
+def macroop VEX_VPEXTRB_P_XMM_I {
+    rdip t7
+    gem5_mm_extract_epi8 t1, xmm, "IMMEDIATE & mask(4)", size=1, ext=0
+    st t1, seg, riprel, disp, dataSize=1
+};
+
+# Both encodings of VPEXTRW share this register form: one puts the general
+# purpose register in ModRM.reg and one in ModRM.rm, but either way it is the
+# first operand named and so becomes reg.
+def macroop VEX_VPEXTRW_R_XMM_I {
+    gem5_mm_extract_epi16 reg, xmmm, "IMMEDIATE & mask(3)", size=2, ext=0
+};
+
+def macroop VEX_VPEXTRW_M_XMM_I {
+    gem5_mm_extract_epi16 t1, xmm, "IMMEDIATE & mask(3)", size=2, ext=0
+    st t1, seg, sib, disp, dataSize=2
+};
+
+def macroop VEX_VPEXTRW_P_XMM_I {
+    rdip t7
+    gem5_mm_extract_epi16 t1, xmm, "IMMEDIATE & mask(3)", size=2, ext=0
+    st t1, seg, riprel, disp, dataSize=2
+};
+
+def macroop VEX_VEXTRACTPS_R_XMM_I {
+    gem5_mm_extract_epi32 reg, xmmm, "IMMEDIATE & mask(2)", size=4, ext=0
+};
+
+def macroop VEX_VEXTRACTPS_M_XMM_I {
+    gem5_mm_extract_epi32 t1, xmm, "IMMEDIATE & mask(2)", size=4, ext=0
+    st t1, seg, sib, disp, dataSize=4
+};
+
+def macroop VEX_VEXTRACTPS_P_XMM_I {
+    rdip t7
+    gem5_mm_extract_epi32 t1, xmm, "IMMEDIATE & mask(2)", size=4, ext=0
+    st t1, seg, riprel, disp, dataSize=4
+};
+
+def macroop VEX_VPINSRB_XMM_XMM_R_I {
+    gem5_avx_insert_epi8 xmm1, xmm2, regm, "IMMEDIATE & mask(4)", size=1, ext=1
+};
+
+def macroop VEX_VPINSRB_XMM_XMM_M_I {
+    ld t1, seg, sib, disp, dataSize=1
+    gem5_avx_insert_epi8 xmm1, xmm2, t1, "IMMEDIATE & mask(4)", size=1, ext=1
+};
+
+def macroop VEX_VPINSRB_XMM_XMM_P_I {
+    rdip t7
+    ld t1, seg, riprel, disp, dataSize=1
+    gem5_avx_insert_epi8 xmm1, xmm2, t1, "IMMEDIATE & mask(4)", size=1, ext=1
+};
+
+def macroop VEX_VPINSRW_XMM_XMM_R_I {
+    gem5_avx_insert_epi16 xmm1, xmm2, regm, "IMMEDIATE & mask(3)", size=2, ext=1
+};
+
+def macroop VEX_VPINSRW_XMM_XMM_M_I {
+    ld t1, seg, sib, disp, dataSize=2
+    gem5_avx_insert_epi16 xmm1, xmm2, t1, "IMMEDIATE & mask(3)", size=2, ext=1
+};
+
+def macroop VEX_VPINSRW_XMM_XMM_P_I {
+    rdip t7
+    ld t1, seg, riprel, disp, dataSize=2
+    gem5_avx_insert_epi16 xmm1, xmm2, t1, "IMMEDIATE & mask(3)", size=2, ext=1
+};
+
 '''

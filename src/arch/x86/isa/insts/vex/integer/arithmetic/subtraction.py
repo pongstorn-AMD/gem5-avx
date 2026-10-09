@@ -89,3 +89,17 @@ def macroop VEX_VPSUBQ_YMM_YMM_P {
     gem5_avx_sub_epu64 ymm1, ymm2, uvec1, size=8, ext=YMM
 };
 '''
+
+# The byte and word subtracts, plain and saturating. See macroop_gen.py.
+from ...macroop_gen import binop
+
+microcode += binop("VEX_VPSUBW", "gem5_avx_sub_epu16", 2)
+microcode += binop("VEX_VPSUBSB", "gem5_avx_subs_epi8", 1)
+microcode += binop("VEX_VPSUBSW", "gem5_avx_subs_epi16", 2)
+microcode += binop("VEX_VPSUBUSB", "gem5_avx_subs_epu8", 1)
+microcode += binop("VEX_VPSUBUSW", "gem5_avx_subs_epu16", 2)
+
+# The horizontal subtracts.
+microcode += binop("VEX_VPHSUBW", "gem5_avx_hsub_epi16", 2)
+microcode += binop("VEX_VPHSUBSW", "gem5_avx_hsubs_epi16", 2)
+microcode += binop("VEX_VPHSUBD", "gem5_avx_hsub_epi32", 4)

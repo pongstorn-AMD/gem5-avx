@@ -60,3 +60,17 @@ def macroop VEX_VPMOVZXDQ_YMM_P {
 };
 
 '''
+
+# The rest of the extending moves. See macroop_gen.py.
+from ...macroop_gen import widen
+
+microcode += widen("VEX_VPMOVSXBW", "gem5_avx_cvtepi8_epi16", 1, 2)
+microcode += widen("VEX_VPMOVSXBD", "gem5_avx_cvtepi8_epi32", 1, 4)
+microcode += widen("VEX_VPMOVSXBQ", "gem5_avx_cvtepi8_epi64", 1, 8)
+microcode += widen("VEX_VPMOVSXWD", "gem5_avx_cvtepi16_epi32", 2, 4)
+microcode += widen("VEX_VPMOVSXWQ", "gem5_avx_cvtepi16_epi64", 2, 8)
+microcode += widen("VEX_VPMOVZXBW", "gem5_avx_cvtepu8_epi16", 1, 2)
+microcode += widen("VEX_VPMOVZXBD", "gem5_avx_cvtepu8_epi32", 1, 4)
+microcode += widen("VEX_VPMOVZXBQ", "gem5_avx_cvtepu8_epi64", 1, 8)
+microcode += widen("VEX_VPMOVZXWD", "gem5_avx_cvtepu16_epi32", 2, 4)
+microcode += widen("VEX_VPMOVZXWQ", "gem5_avx_cvtepu16_epi64", 2, 8)

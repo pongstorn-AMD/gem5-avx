@@ -195,3 +195,9 @@ def macroop VEX_VPCMPGTD_YMM_YMM_P {
 };
 
 '''
+
+# The word comparisons. See macroop_gen.py.
+from ...macroop_gen import binop
+
+microcode += binop("VEX_VPCMPEQW", "gem5_avx_cmpeq_epu16", 2)
+microcode += binop("VEX_VPCMPGTW", "gem5_avx_cmpgt_epi16", 2)
