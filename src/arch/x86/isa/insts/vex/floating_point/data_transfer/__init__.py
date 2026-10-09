@@ -35,7 +35,7 @@
 
 categories = ["move",
               "move_with_duplication",
-#              "move_non_temporal",
+              "move_non_temporal",
               "move_mask",
               "gather_scatter"]
 

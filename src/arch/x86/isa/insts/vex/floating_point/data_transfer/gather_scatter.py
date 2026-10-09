@@ -106,7 +106,7 @@ def macroop VEX_VGATHERDPD_XMM_XMM_M {
 loadLoopTop:
     gem5_avx_get_epi32 t1, vindex, t4, size=4, ext=0
     ld t2, seg, [scale, t1, base], disp, dataSize=8
-    gem5_avx_set_epi64 xmm, xmm, t2, t4, size=8, ext=0
+    gem5_avx_set_epi64 uvec1, uvec1, t2, t4, size=8, ext=0
     addi t4, t4, 1
     subi t3, t3, 1, flags=(EZF,), dataSize=8
     br label("loadLoopTop"), flags=(nCEZF,)
@@ -130,7 +130,7 @@ def macroop VEX_VGATHERDPD_YMM_YMM_M {
 loadLoopTop:
     gem5_avx_get_epi32 t1, vindex, t4, size=4, ext=0
     ld t2, seg, [scale, t1, base], disp, dataSize=8
-    gem5_avx_set_epi64 ymm, ymm, t2, t4, size=8, ext=0
+    gem5_avx_set_epi64 uvec1, uvec1, t2, t4, size=8, ext=0
     addi t4, t4, 1
     subi t3, t3, 1, flags=(EZF,), dataSize=8
     br label("loadLoopTop"), flags=(nCEZF,)
@@ -154,7 +154,7 @@ def macroop VEX_VGATHERQPD_XMM_XMM_M {
 loadLoopTop:
     gem5_avx_get_epi64 t1, vindex, t4, size=8, ext=0
     ld t2, seg, [scale, t1, base], disp, dataSize=8
-    gem5_avx_set_epi64 xmm, xmm, t2, t4, size=8, ext=0
+    gem5_avx_set_epi64 uvec1, uvec1, t2, t4, size=8, ext=0
     addi t4, t4, 1
     subi t3, t3, 1, flags=(EZF,), dataSize=8
     br label("loadLoopTop"), flags=(nCEZF,)
@@ -178,7 +178,7 @@ def macroop VEX_VGATHERQPD_YMM_YMM_M {
 loadLoopTop:
     gem5_avx_get_epi64 t1, vindex, t4, size=8, ext=0
     ld t2, seg, [scale, t1, base], disp, dataSize=8
-    gem5_avx_set_epi64 ymm, ymm, t2, t4, size=8, ext=0
+    gem5_avx_set_epi64 uvec1, uvec1, t2, t4, size=8, ext=0
     addi t4, t4, 1
     subi t3, t3, 1, flags=(EZF,), dataSize=8
     br label("loadLoopTop"), flags=(nCEZF,)

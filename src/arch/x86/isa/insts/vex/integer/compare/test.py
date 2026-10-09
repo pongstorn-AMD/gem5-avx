@@ -52,3 +52,10 @@ def macroop VEX_KORTESTQ_K_K {
 };
 
 '''
+
+# VTESTPS and VTESTPD are VPTEST restricted to the sign bits, so the element
+# size tells the microop which bit to look at. See macroop_gen.py.
+from ...macroop_gen import unop
+
+microcode += unop("VEX_VTESTPS", "gem5_avx_testp_ps", 4)
+microcode += unop("VEX_VTESTPD", "gem5_avx_testp_pd", 8)

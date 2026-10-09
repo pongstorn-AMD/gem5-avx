@@ -120,3 +120,11 @@ def macroop VEX_VPUNPCKHQDQ_YMM_YMM_P {
 };
 
 '''
+
+# The byte and word interleaves. See macroop_gen.py.
+from ...macroop_gen import binop
+
+microcode += binop("VEX_VPUNPCKLBW", "gem5_avx_unpacklo_epu8", 1)
+microcode += binop("VEX_VPUNPCKHBW", "gem5_avx_unpackhi_epu8", 1)
+microcode += binop("VEX_VPUNPCKLWD", "gem5_avx_unpacklo_epu16", 2)
+microcode += binop("VEX_VPUNPCKHWD", "gem5_avx_unpackhi_epu16", 2)

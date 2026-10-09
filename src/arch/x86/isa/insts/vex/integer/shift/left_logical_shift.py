@@ -153,3 +153,12 @@ def macroop VEX_VPSLLDQ_YMM_P_I {
 };
 
 '''
+
+# The word shifts and the variable shifts. See macroop_gen.py.
+from ...macroop_gen import binop, shift_imm, shift_count
+
+microcode += shift_imm("VEX_VPSLLW", "gem5_avx_sll_epu16_imm", 2)
+microcode += shift_count("VEX_VPSLLW", "gem5_avx_sll_epu16", 2)
+
+microcode += binop("VEX_VPSLLVD", "gem5_avx_sllv_epu32", 4)
+microcode += binop("VEX_VPSLLVQ", "gem5_avx_sllv_epu64", 8)

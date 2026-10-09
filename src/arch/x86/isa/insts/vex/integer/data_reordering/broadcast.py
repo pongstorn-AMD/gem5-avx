@@ -47,6 +47,19 @@ def macroop VEX_VPBROADCASTQ_ZMM_XMM {
     gem5_avx_broadcast zmm, xmmm, size=8, ext=ZMM
 };
 
+# The 128-bit broadcast repeats the loaded lane, which is two quadwords, so
+# it is the quadword broadcast with a modulo of two.
+def macroop VEX_VBROADCASTI128_YMM_M {
+    ldvec128 uvec1, seg, sib, disp, dataSize=16
+    gem5_avx_broadcast_pd ymm, uvec1, size=8, ext="2 |" + YMM
+};
+
+def macroop VEX_VBROADCASTI128_YMM_P {
+    rdip t7
+    ldvec128 uvec1, seg, riprel, disp, dataSize=16
+    gem5_avx_broadcast_pd ymm, uvec1, size=8, ext="2 |" + YMM
+};
+
 '''
 
 sibRel = 'ld t1, seg, sib, disp, dataSize={}'

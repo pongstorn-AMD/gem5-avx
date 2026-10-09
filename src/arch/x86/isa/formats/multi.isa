@@ -56,12 +56,20 @@ def format MultiInst(switchVal, *opTypeSets) {{
      decode_block, exec_output) = blocks.makeList()
 }};
 
-def format VexMultiInst(switchVal, opTypeSet) {{
+def format VexMultiInst(switchVal, *Sets) {{
     switcher = {}
-    opTypeSets = (opTypeSet.copy(), opTypeSet.copy())
+    # One set means both widths read operands of the same size. An
+    # instruction that widens, such as VPMOVSXBW, reads half as much for its
+    # XMM form as for its YMM form and so needs a set per width.
+    if( len(Sets) == 1 ):
+        opTypeSets = (Sets[0].copy(), Sets[0].copy())
+    else:
+        opTypeSets = Sets
+
     for (count, opTypeSet, vex_l) in \
             zip(range(len(opTypeSets)), opTypeSets, ['','y']):
-        switcher[count] = (specializeInst, Name+vex_l, opTypeSet, EmulEnv())
+        if( len(opTypeSet) > 0 ):
+            switcher[count] = (specializeInst, Name+vex_l, opTypeSet, EmulEnv())
     blocks = doSplitDecode(switchVal, switcher)
     (header_output, decoder_output,
      decode_block, exec_output) = blocks.makeList()

@@ -120,3 +120,8 @@ def macroop VEX_VPSRAD_YMM_P_I {
 };
 
 '''
+
+# VPSRAVQ does not exist until AVX-512. See macroop_gen.py.
+from ...macroop_gen import binop
+
+microcode += binop("VEX_VPSRAVD", "gem5_avx_srav_epi32", 4)

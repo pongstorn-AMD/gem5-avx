@@ -89,3 +89,20 @@ def macroop VEX_VPMAXSD_YMM_YMM_P {
     gem5_avx_max_epi32 ymm1, ymm2, uvec1, size=4, ext=YMM
 };
 '''
+
+# The rest of the signedness and element size combinations. See macroop_gen.py.
+from ...macroop_gen import binop, unop
+
+microcode += binop("VEX_VPMINSB", "gem5_avx_min_epi8", 1)
+microcode += binop("VEX_VPMAXSB", "gem5_avx_max_epi8", 1)
+microcode += binop("VEX_VPMAXUB", "gem5_avx_max_epu8", 1)
+microcode += binop("VEX_VPMINSW", "gem5_avx_min_epi16", 2)
+microcode += binop("VEX_VPMAXSW", "gem5_avx_max_epi16", 2)
+microcode += binop("VEX_VPMINUW", "gem5_avx_min_epu16", 2)
+microcode += binop("VEX_VPMAXUW", "gem5_avx_max_epu16", 2)
+microcode += binop("VEX_VPMINUD", "gem5_avx_min_epu32", 4)
+microcode += binop("VEX_VPMAXUD", "gem5_avx_max_epu32", 4)
+
+# VPHMINPOSUW is 128-bit only: it writes the smallest word of its source and
+# that word's index into the low two words of the destination.
+microcode += unop("VEX_VPHMINPOSUW", "gem5_avx_phminposuw", 2, only=["XMM"])

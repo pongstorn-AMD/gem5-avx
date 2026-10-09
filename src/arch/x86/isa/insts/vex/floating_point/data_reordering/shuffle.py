@@ -225,3 +225,9 @@ def macroop VEX_VPERM2F128_YMM_YMM_P_I {
 };
 
 '''
+
+# The variable form of VPERMILPS, whose selectors come from a register rather
+# than an immediate. See macroop_gen.py.
+from ...macroop_gen import binop
+
+microcode += binop("VEX_VPERMILPS", "gem5_avx_permutevar_ps", 4)
