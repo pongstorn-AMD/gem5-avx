@@ -180,3 +180,8 @@ def macroop EVEX_VPUNPCKHQDQ_ZMM_ZMM_P {
 };
 
 '''
+
+# The AVX512BW byte interleave. See macroop_gen.py.
+from ...macroop_gen import binop
+
+microcode += binop("EVEX_VPUNPCKLBW", "gem5_avx_unpacklo_epu8", 1)

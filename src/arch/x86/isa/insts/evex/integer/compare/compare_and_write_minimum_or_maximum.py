@@ -350,3 +350,8 @@ def macroop EVEX_VPMAXSQ_ZMM_ZMM_P_K  {
 };
 
 '''
+
+# The AVX512BW word maximum. See macroop_gen.py.
+from ...macroop_gen import binop
+
+microcode += binop("EVEX_VPMAXSW", "gem5_avx_max_epi16", 2)

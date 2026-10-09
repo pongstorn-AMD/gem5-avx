@@ -207,3 +207,8 @@ def macroop EVEX_VPSLLDQ_ZMM_P_I {
 };
 
 '''
+
+# The AVX512BW word shift by an immediate. See macroop_gen.py.
+from ...macroop_gen import shift_imm
+
+microcode += shift_imm("EVEX_VPSLLW", "gem5_avx_sll_epu16_imm", 2)

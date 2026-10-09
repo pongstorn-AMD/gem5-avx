@@ -336,6 +336,24 @@ let {{
 #                sw16_dest_sw16[i] = 0;
 #        '''
 
+    class gem5_avx_add_epu8(AVXOp):
+        op_class = 'SimdAddOp'
+        code = '''
+            VecDestReg_ub = { 0 };
+            int count = zmmOp() ? 64 : (ymmOp() ? 32 : 16);
+            for(int i=0; i<count; i++)
+                VecDestReg_ub[i] = VecSrcReg1_ub[i] + VecSrcReg2_ub[i];
+        '''
+
+    class gem5_avx_add_epu16(AVXOp):
+        op_class = 'SimdAddOp'
+        code = '''
+            VecDestReg_uw = { 0 };
+            int count = zmmOp() ? 32 : (ymmOp() ? 16 : 8);
+            for(int i=0; i<count; i++)
+                VecDestReg_uw[i] = VecSrcReg1_uw[i] + VecSrcReg2_uw[i];
+        '''
+
     class gem5_avx_add_epu32(AVXOp):
         op_class = 'SimdAddOp'
         code = '''
@@ -464,6 +482,131 @@ let {{
             int count = zmmOp() ? 8 : (ymmOp() ? 4 : 2);
             for(int i=0; i<count; i++)
                 VecDestReg_df[i] = VecSrcReg1_df[i] - VecSrcReg2_df[i];
+        '''
+
+    class gem5_avx_adds_epi8(AVXOp):
+        op_class = 'SimdAddOp'
+        code = '''
+            VecDestReg_sb = { 0 };
+            int count = zmmOp() ? 64 : (ymmOp() ? 32 : 16);
+            for(int i=0; i<count; i++) {
+                int32_t sum = (int32_t)VecSrcReg1_sb[i]
+                            + (int32_t)VecSrcReg2_sb[i];
+                VecDestReg_sb[i] = (sum > 127) ? 127
+                                 : ((sum < -128) ? -128 : sum);
+            }
+        '''
+
+    class gem5_avx_adds_epu8(AVXOp):
+        op_class = 'SimdAddOp'
+        code = '''
+            VecDestReg_ub = { 0 };
+            int count = zmmOp() ? 64 : (ymmOp() ? 32 : 16);
+            for(int i=0; i<count; i++) {
+                uint32_t sum = (uint32_t)VecSrcReg1_ub[i]
+                             + (uint32_t)VecSrcReg2_ub[i];
+                VecDestReg_ub[i] = (sum > 255) ? 255 : sum;
+            }
+        '''
+
+    class gem5_avx_avg_epu8(AVXOp):
+        op_class = 'SimdAddOp'
+        code = '''
+            VecDestReg_ub = { 0 };
+            int count = zmmOp() ? 64 : (ymmOp() ? 32 : 16);
+            for(int i=0; i<count; i++)
+                VecDestReg_ub[i] = ((uint32_t)VecSrcReg1_ub[i]
+                                  + (uint32_t)VecSrcReg2_ub[i] + 1) >> 1;
+        '''
+
+    class gem5_avx_avg_epu16(AVXOp):
+        op_class = 'SimdAddOp'
+        code = '''
+            VecDestReg_uw = { 0 };
+            int count = zmmOp() ? 32 : (ymmOp() ? 16 : 8);
+            for(int i=0; i<count; i++)
+                VecDestReg_uw[i] = ((uint32_t)VecSrcReg1_uw[i]
+                                  + (uint32_t)VecSrcReg2_uw[i] + 1) >> 1;
+        '''
+
+    class gem5_avx_sad_epu8(AVXOp):
+        op_class = 'SimdAddOp'
+        code = '''
+            VecDestReg_uqw = { 0 };
+            int count = zmmOp() ? 8 : (ymmOp() ? 4 : 2);
+            for(int i=0; i<count; i++) {
+                uint16_t sum = 0;
+                for(int j=0; j<8; j++) {
+                    int32_t a = VecSrcReg1_ub[i*8+j];
+                    int32_t b = VecSrcReg2_ub[i*8+j];
+                    sum += (a > b) ? (a - b) : (b - a);
+                }
+                VecDestReg_uqw[i] = sum;
+            }
+        '''
+
+    class gem5_avx_abs_epi8(AVXOp):
+        op_class = 'SimdAluOp'
+        def __init__(self, dest, src, \
+                size = None, destSize = None, srcSize = None, ext = None):
+            super(gem5_avx_abs_epi8, self).__init__(dest, src, \
+                    "InstRegIndex(0)", "InstRegIndex(0)", \
+                    size, destSize, srcSize, ext)
+        code = '''
+            VecDestReg_ub = { 0 };
+            int count = zmmOp() ? 64 : (ymmOp() ? 32 : 16);
+            for(int i=0; i<count; i++) {
+                int8_t arg = VecSrcReg1_sb[i];
+                VecDestReg_ub[i] = (arg < 0) ? -(int32_t)arg : arg;
+            }
+        '''
+
+    class gem5_avx_abs_epi16(AVXOp):
+        op_class = 'SimdAluOp'
+        def __init__(self, dest, src, \
+                size = None, destSize = None, srcSize = None, ext = None):
+            super(gem5_avx_abs_epi16, self).__init__(dest, src, \
+                    "InstRegIndex(0)", "InstRegIndex(0)", \
+                    size, destSize, srcSize, ext)
+        code = '''
+            VecDestReg_uw = { 0 };
+            int count = zmmOp() ? 32 : (ymmOp() ? 16 : 8);
+            for(int i=0; i<count; i++) {
+                int16_t arg = VecSrcReg1_sw[i];
+                VecDestReg_uw[i] = (arg < 0) ? -(int32_t)arg : arg;
+            }
+        '''
+
+    class gem5_avx_abs_epi32(AVXOp):
+        op_class = 'SimdAluOp'
+        def __init__(self, dest, src, \
+                size = None, destSize = None, srcSize = None, ext = None):
+            super(gem5_avx_abs_epi32, self).__init__(dest, src, \
+                    "InstRegIndex(0)", "InstRegIndex(0)", \
+                    size, destSize, srcSize, ext)
+        code = '''
+            VecDestReg_udw = { 0 };
+            int count = zmmOp() ? 16 : (ymmOp() ? 8 : 4);
+            for(int i=0; i<count; i++) {
+                int32_t arg = VecSrcReg1_sdw[i];
+                VecDestReg_udw[i] = (arg < 0) ? -(int64_t)arg : arg;
+            }
+        '''
+
+    class gem5_avx_abs_epi64(AVXOp):
+        op_class = 'SimdAluOp'
+        def __init__(self, dest, src, \
+                size = None, destSize = None, srcSize = None, ext = None):
+            super(gem5_avx_abs_epi64, self).__init__(dest, src, \
+                    "InstRegIndex(0)", "InstRegIndex(0)", \
+                    size, destSize, srcSize, ext)
+        code = '''
+            VecDestReg_uqw = { 0 };
+            int count = zmmOp() ? 8 : (ymmOp() ? 4 : 2);
+            for(int i=0; i<count; i++) {
+                int64_t arg = VecSrcReg1_sqw[i];
+                VecDestReg_uqw[i] = (arg < 0) ? -(uint64_t)arg : arg;
+            }
         '''
 
     class gem5_avx_sub_epu8(AVXOp):
@@ -631,6 +774,42 @@ let {{
             for(int i=0; i<count; i++)
                 VecDestReg_sqw[i] = (int64_t) VecSrcReg1_udw[i*2] *
                                     (int64_t) VecSrcReg2_udw[i*2];
+        '''
+
+    class gem5_avx_mullo_epi16(AVXOp):
+        op_class = 'SimdMultOp'
+        code = '''
+            VecDestReg_uw = { 0 };
+            int count = zmmOp() ? 32 : (ymmOp() ? 16 : 8);
+            for(int i=0; i<count; i++) {
+                int16_t arg1 = VecSrcReg1_sw[i];
+                int16_t arg2 = VecSrcReg2_sw[i];
+                VecDestReg_uw[i] = (arg1 * arg2) & mask(16);
+            }
+        '''
+
+    class gem5_avx_mulhi_epi16(AVXOp):
+        op_class = 'SimdMultOp'
+        code = '''
+            VecDestReg_uw = { 0 };
+            int count = zmmOp() ? 32 : (ymmOp() ? 16 : 8);
+            for(int i=0; i<count; i++) {
+                int32_t arg1 = VecSrcReg1_sw[i];
+                int32_t arg2 = VecSrcReg2_sw[i];
+                VecDestReg_uw[i] = ((arg1 * arg2) >> 16) & mask(16);
+            }
+        '''
+
+    class gem5_avx_mulhi_epu16(AVXOp):
+        op_class = 'SimdMultOp'
+        code = '''
+            VecDestReg_uw = { 0 };
+            int count = zmmOp() ? 32 : (ymmOp() ? 16 : 8);
+            for(int i=0; i<count; i++) {
+                uint32_t arg1 = VecSrcReg1_uw[i];
+                uint32_t arg2 = VecSrcReg2_uw[i];
+                VecDestReg_uw[i] = (arg1 * arg2) >> 16;
+            }
         '''
 
     class gem5_avx_mullo_epi32(AVXOp):
@@ -1490,6 +1669,16 @@ let {{
                     OpMaskDestReg |= mask(1) << i;
         '''
 
+    class gem5_evex_cmpgt_epi8(AVXOp):
+        op_class = 'SimdCvtOp'
+        code = '''
+            OpMaskDestReg = 0;
+            int count = zmmOp() ? 64 : (ymmOp() ? 32 : 16);
+            for(int i=0; i<count; i++)
+                if(VecSrcReg1_sb[i] > VecSrcReg2_sb[i])
+                    OpMaskDestReg |= mask(1) << i;
+        '''
+
     class gem5_evex_cmpeq_epi32(AVXOp):
         op_class = 'SimdCvtOp'
         code = '''
@@ -2148,6 +2337,22 @@ let {{
             }
         '''
 
+    class gem5_avx_srl_epu16_imm(AVXOp):
+        def __init__(self, dest, src, op2, \
+                size = None, destSize = None, srcSize = None, ext = None):
+            super(gem5_avx_srl_epu16_imm, self).__init__(dest, src, \
+                    "InstRegIndex(0)", op2, size, destSize, srcSize, ext)
+        op_class = 'SimdShiftOp'
+        code = '''
+            VecDestReg_uw = { 0 };
+            uint64_t shiftAmt = op2_uqw;
+            if( shiftAmt < 16 ) {
+                int count = zmmOp() ? 32 : (ymmOp() ? 16 : 8);
+                for(int i=0; i<count; i++)
+                    VecDestReg_uw[i] = VecSrcReg1_uw[i] >> shiftAmt;
+            }
+        '''
+
     class gem5_avx_srl_epu32_imm(AVXOp):
         def __init__(self, dest, src, op2, \
                 size = None, destSize = None, srcSize = None, ext = None):
@@ -2248,6 +2453,22 @@ let {{
                 int count = zmmOp() ? 16 : (ymmOp() ? 8 : 4);
                 for(int i=0; i<count; i++)
                     VecDestReg_udw[i] = VecSrcReg1_udw[i] << shiftAmt;
+            }
+        '''
+
+    class gem5_avx_sll_epu16_imm(AVXOp):
+        def __init__(self, dest, src, op2, \
+                size = None, destSize = None, srcSize = None, ext = None):
+            super(gem5_avx_sll_epu16_imm, self).__init__(dest, src, \
+                    "InstRegIndex(0)", op2, size, destSize, srcSize, ext)
+        op_class = 'SimdShiftOp'
+        code = '''
+            VecDestReg_uw = { 0 };
+            uint64_t shiftAmt = op2_uqw;
+            if( shiftAmt < 16 ) {
+                int count = zmmOp() ? 32 : (ymmOp() ? 16 : 8);
+                for(int i=0; i<count; i++)
+                    VecDestReg_uw[i] = VecSrcReg1_uw[i] << shiftAmt;
             }
         '''
 
@@ -2521,6 +2742,36 @@ let {{
 #                uw16_dest_uw16[i*2+1] = ( ext ) ? (uw16_src2_uw16[i+cnt]) : 0;
 #            }
 #        '''
+
+    class gem5_avx_packus_epi16(AVXOp):
+        op_class = 'SimdShuffleOp'
+        code = '''
+            VecDestReg_ub = { 0 };
+            int lanes = zmmOp() ? 4 : (ymmOp() ? 2 : 1);
+            for(int l=0; l<lanes; l++) {
+                for(int i=0; i<8; i++) {
+                    int16_t a = VecSrcReg1_sw[l*8+i];
+                    int16_t b = VecSrcReg2_sw[l*8+i];
+                    VecDestReg_ub[l*16+i  ] = (a < 0) ? 0
+                                            : ((a > 255) ? 255 : a);
+                    VecDestReg_ub[l*16+i+8] = (b < 0) ? 0
+                                            : ((b > 255) ? 255 : b);
+                }
+            }
+        '''
+
+    class gem5_avx_unpacklo_epu8(AVXOp):
+        op_class = 'SimdShuffleOp'
+        code = '''
+            VecDestReg_ub = { 0 };
+            int lanes = zmmOp() ? 4 : (ymmOp() ? 2 : 1);
+            for(int l=0; l<lanes; l++) {
+                for(int i=0; i<8; i++) {
+                    VecDestReg_ub[l*16+i*2  ] = VecSrcReg1_ub[l*16+i];
+                    VecDestReg_ub[l*16+i*2+1] = VecSrcReg2_ub[l*16+i];
+                }
+            }
+        '''
 
     class gem5_avx_unpacklo_epu32(AVXOp):
         op_class = 'SimdShuffleOp'

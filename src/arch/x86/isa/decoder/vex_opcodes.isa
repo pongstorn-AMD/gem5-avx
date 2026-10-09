@@ -227,12 +227,13 @@ format WarnUnimpl {
                                                       [GKw,Ew],
                                                       [Gw,EKw]);
                     }
+                    // Only the mask-to-mask and mask-to-memory forms are
+                    // encoded without an implied prefix; moves between a
+                    // mask and a general purpose register carry F2 and are
+                    // decoded under VEX_P 0x3 below.
                     0x1: decode OPCODE_OP_BOTTOM3 {
-//                        default: MultiInst::VEX_KMOVQ(OPCODE_OP_BOTTOM3,
-//                                                      [GKw,EKw],
-//                                                      [Mw,GKw],
-//                                                      [GKw,Ew],
-//                                                      [Gw,EKw]);
+                        0x0: Inst::VEX_KMOVQ(GKq,EKq);
+                        0x1: Inst::VEX_KMOVQ(Mq,GKq);
                         default: Inst::UD2();
                     }
                 }
@@ -245,11 +246,22 @@ format WarnUnimpl {
                                                       [Gb,EKb]);
                     }
                     0x1: decode OPCODE_OP_BOTTOM3 {
-//                        default: MultiInst::VEX_KMOVD(OPCODE_OP_BOTTOM3,
-//                                                      [GKw,EKw],
-//                                                      [Mw,GKw],
-//                                                      [GKw,Ew],
-//                                                      [Gw,EKw]);
+                        0x0: Inst::VEX_KMOVD(GKd,EKd);
+                        0x1: Inst::VEX_KMOVD(Md,GKd);
+                        default: Inst::UD2();
+                    }
+                }
+                // F2: the moves between a mask register and a general
+                // purpose register.
+                0x3: decode VEX_W {
+                    0x0: decode OPCODE_OP_BOTTOM3 {
+                        0x2: Inst::VEX_KMOVD(GKd,Ed);
+                        0x3: Inst::VEX_KMOVD(Gd,EKd);
+                        default: Inst::UD2();
+                    }
+                    0x1: decode OPCODE_OP_BOTTOM3 {
+                        0x2: Inst::VEX_KMOVQ(GKq,Eq);
+                        0x3: Inst::VEX_KMOVQ(Gq,EKq);
                         default: Inst::UD2();
                     }
                 }

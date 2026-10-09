@@ -35,7 +35,7 @@
 
 categories = [#"blend",
               "broadcast",
-#              "pack",
+              "pack",
               "unpack_and_interleave",
               "extract_and_insert",
               "shuffle"]

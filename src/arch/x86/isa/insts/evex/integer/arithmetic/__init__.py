@@ -35,11 +35,11 @@
 
 categories = ["addition",
               "subtraction",
-              "multiplication"]
+              "multiplication",
+              "average",
+              "sum_of_absolute_differences",
+              "absolute_values"]
 #              "multiply_add",
-#              "average",
-#              "sum_of_absolute_differences",
-#              "absolute_values"]
 
 microcode = '''
 # AVX512 scientific instructions
