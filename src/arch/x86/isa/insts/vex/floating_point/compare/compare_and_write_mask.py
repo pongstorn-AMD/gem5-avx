@@ -74,4 +74,19 @@ def macroop VEX_VCMPSD_XMM_XMM_P_I {
     gem5_avx_cmp_sd xmm1, xmm2, uvec1, size=8, ext="IMMEDIATE |" + Scalar
 };
 
+def macroop VEX_VCMPSS_XMM_XMM_XMM_I {
+    gem5_avx_cmp_ss xmm1, xmm2, xmmm, size=4, ext="IMMEDIATE |" + Scalar
+};
+
+def macroop VEX_VCMPSS_XMM_XMM_M_I {
+    ldvec128lo0 uvec1, seg, sib, "DISPLACEMENT", dataSize=4
+    gem5_avx_cmp_ss xmm1, xmm2, uvec1, size=4, ext="IMMEDIATE |" + Scalar
+};
+
+def macroop VEX_VCMPSS_XMM_XMM_P_I {
+    rdip t7
+    ldvec128lo0 uvec1, seg, riprel, "DISPLACEMENT", dataSize=4
+    gem5_avx_cmp_ss xmm1, xmm2, uvec1, size=4, ext="IMMEDIATE |" + Scalar
+};
+
 '''

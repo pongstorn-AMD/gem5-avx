@@ -180,3 +180,7 @@ def macroop EVEX_VPSRAD_ZMM_P_I {
 };
 
 '''
+
+from ...macroop_gen import binop
+
+microcode += binop("EVEX_VPSRAVD", "gem5_avx_srav_epi32", 4)

@@ -149,6 +149,36 @@ def macroop VEX_VPERMILPD_YMM_P_I {
     gem5_avx_permute_pd ymm1, uvec1, size=8, ext="(IMMEDIATE & mask(8)) |" + YMM
 };
 
+def macroop VEX_VPERMILPS_XMM_XMM_I {
+    gem5_avx_permute_ps xmm1, xmmm, size=4, ext="(IMMEDIATE & mask(8)) |" + XMM
+};
+
+def macroop VEX_VPERMILPS_XMM_M_I {
+    ldvec128 uvec1, seg, sib, "DISPLACEMENT", dataSize=16
+    gem5_avx_permute_ps xmm1, uvec1, size=4, ext="(IMMEDIATE & mask(8)) |" + XMM
+};
+
+def macroop VEX_VPERMILPS_XMM_P_I {
+    rdip t7
+    ldvec128 uvec1, seg, riprel, "DISPLACEMENT", dataSize=16
+    gem5_avx_permute_ps xmm1, uvec1, size=4, ext="(IMMEDIATE & mask(8)) |" + XMM
+};
+
+def macroop VEX_VPERMILPS_YMM_YMM_I {
+    gem5_avx_permute_ps ymm1, ymmm, size=4, ext="(IMMEDIATE & mask(8)) |" + YMM
+};
+
+def macroop VEX_VPERMILPS_YMM_M_I {
+    ldvec256 uvec1, seg, sib, "DISPLACEMENT", dataSize=32
+    gem5_avx_permute_ps ymm1, uvec1, size=4, ext="(IMMEDIATE & mask(8)) |" + YMM
+};
+
+def macroop VEX_VPERMILPS_YMM_P_I {
+    rdip t7
+    ldvec256 uvec1, seg, riprel, "DISPLACEMENT", dataSize=32
+    gem5_avx_permute_ps ymm1, uvec1, size=4, ext="(IMMEDIATE & mask(8)) |" + YMM
+};
+
 def macroop VEX_VPERMPS_YMM_YMM_YMM {
     gem5_avx_permutexvar_epi32 ymm1, ymm2, ymmm, size=4, ext=YMM
 };
