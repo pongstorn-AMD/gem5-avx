@@ -139,11 +139,14 @@ def macroop EVEX_VPSRLQ_YMM_YMM_I {
 };
 
 def macroop EVEX_VPSRLQ_YMM_M_I {
-    fault "std::make_shared<UnimpInstFault>()"
+    ldvec256 uvec1, seg, sib, disp, dataSize=32
+    gem5_avx_srl_epu64_immi ymm, uvec1, imm, size=8, ext=YMM
 };
 
 def macroop EVEX_VPSRLQ_YMM_P_I {
-    fault "std::make_shared<UnimpInstFault>()"
+    rdip t7
+    ldvec256 uvec1, seg, riprel, disp, dataSize=32
+    gem5_avx_srl_epu64_immi ymm, uvec1, imm, size=8, ext=YMM
 };
 
 def macroop EVEX_VPSRLQ_ZMM_ZMM_XMM {
@@ -166,11 +169,14 @@ def macroop EVEX_VPSRLQ_ZMM_ZMM_I {
 };
 
 def macroop EVEX_VPSRLQ_ZMM_M_I {
-    fault "std::make_shared<UnimpInstFault>()"
+    ldvec512 uvec1, seg, sib, disp, dataSize=64
+    gem5_avx_srl_epu64_immi zmm, uvec1, imm, size=8, ext=ZMM
 };
 
 def macroop EVEX_VPSRLQ_ZMM_P_I {
-    fault "std::make_shared<UnimpInstFault>()"
+    rdip t7
+    ldvec512 uvec1, seg, riprel, disp, dataSize=64
+    gem5_avx_srl_epu64_immi zmm, uvec1, imm, size=8, ext=ZMM
 };
 
 def macroop EVEX_VPSRLDQ_XMM_XMM_I {

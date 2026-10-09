@@ -471,7 +471,8 @@ format WarnUnimpl {
                         default: Inst::UD2();
                     }
                     0x2: decode EVEX_W {
-                        0x0: EvexMulti_EVEX_VCVTPS2PD_Vpd_Wps();
+                        0x0: EvexMultiInst::EVEX_VCVTPS2PD(EVEX_LL,
+                                           [Vx,Wdq], [Vx,Wdq], [Vx,Wqq]);
                         default: Inst::UD2();
                     }
                     0x3: decode EVEX_W {
@@ -535,7 +536,8 @@ format WarnUnimpl {
                     0x1: Inst::EVEX_VMULSS(Vss,Hss,Wss);
                     0x2: Inst::EVEX_VCVTSS2SD(Vsd,Hx,Wss);
                     0x3: decode EVEX_W {
-                        0x0: EvexMultiInst_VCVTTPS2DQ_Vx_Wps();
+                        0x0: EvexMultiInst::EVEX_VCVTTPS2DQ(EVEX_LL,
+                                                            [Vx,Wps]);
                         default: Inst::UD2();
                     }
                     0x4: Inst::EVEX_VSUBSS(Vss,Hss,Wss);
@@ -737,23 +739,31 @@ format WarnUnimpl {
                     0x5: EvexMultiInst::EVEX_VPMOVSXDQ(EVEX_LL,
                                            [Vx,Wdq], [Vx,Wdq], [Vx,Wqq]);
                     0x6: decode EVEX_W {
-                        0x0: Inst::EVEX_VPTESTMB(GKv,Hpd,Wpd);
-                        0x1: Inst::EVEX_VPTESTMW(GKv,Hpd,Wpd);
+                        0x0: EvexMultiInst::EVEX_VPTESTMB(EVEX_LL,
+                                                          [GKv,Hx,Wx]);
+                        0x1: EvexMultiInst::EVEX_VPTESTMW(EVEX_LL,
+                                                          [GKv,Hx,Wx]);
                     }
                     0x7: decode EVEX_W {
-                        0x0: Inst::EVEX_VPTESTMD(GKv,Hpd,Wpd);
-                        0x1: Inst::EVEX_VPTESTMQ(GKv,Hpd,Wpd);
+                        0x0: EvexMultiInst::EVEX_VPTESTMD(EVEX_LL,
+                                                          [GKv,Hx,Wx]);
+                        0x1: EvexMultiInst::EVEX_VPTESTMQ(EVEX_LL,
+                                                          [GKv,Hx,Wx]);
                     }
                     default: Inst::UD2();
                 }
                 0x2: decode OPCODE_OP_BOTTOM3 {
                     0x6: decode EVEX_W {
-                        0x0: Inst::EVEX_VPTESTNMB(GKv,Hpd,Wpd);
-                        0x1: Inst::EVEX_VPTESTNMW(GKv,Hpd,Wpd);
+                        0x0: EvexMultiInst::EVEX_VPTESTNMB(EVEX_LL,
+                                                           [GKv,Hx,Wx]);
+                        0x1: EvexMultiInst::EVEX_VPTESTNMW(EVEX_LL,
+                                                           [GKv,Hx,Wx]);
                     }
                     0x7: decode EVEX_W {
-                        0x0: Inst::EVEX_VPTESTNMD(GKv,Hpd,Wpd);
-                        0x1: Inst::EVEX_VPTESTNMQ(GKv,Hpd,Wpd);
+                        0x0: EvexMultiInst::EVEX_VPTESTNMD(EVEX_LL,
+                                                           [GKv,Hx,Wx]);
+                        0x1: EvexMultiInst::EVEX_VPTESTNMQ(EVEX_LL,
+                                                           [GKv,Hx,Wx]);
                     }
                     default: Inst::UD2();
                 }
