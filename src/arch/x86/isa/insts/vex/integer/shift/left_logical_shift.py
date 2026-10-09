@@ -33,14 +33,6 @@ def macroop VEX_VPSLLQ_XMM_XMM_I {
     gem5_avx_sll_epu64_immi xmm, xmmm, imm, size=8, ext=XMM
 };
 
-def macroop VEX_VPSLLQ_XMM_M_I {
-    fault "std::make_shared<UnimpInstFault>()"
-};
-
-def macroop VEX_VPSLLQ_XMM_P_I {
-    fault "std::make_shared<UnimpInstFault>()"
-};
-
 def macroop VEX_VPSLLD_XMM_XMM_XMM {
     gem5_avx_sll_epu32 xmm1, xmm2, xmmm, size=4, ext=XMM
 };
@@ -58,14 +50,6 @@ def macroop VEX_VPSLLD_XMM_XMM_P {
 
 def macroop VEX_VPSLLD_XMM_XMM_I {
     gem5_avx_sll_epu32_immi xmm, xmmm, imm, size=4, ext=XMM
-};
-
-def macroop VEX_VPSLLD_XMM_M_I {
-    fault "std::make_shared<UnimpInstFault>()"
-};
-
-def macroop VEX_VPSLLD_XMM_P_I {
-    fault "std::make_shared<UnimpInstFault>()"
 };
 
 def macroop VEX_VPSLLD_YMM_YMM_XMM {
@@ -87,14 +71,6 @@ def macroop VEX_VPSLLD_YMM_YMM_I {
     gem5_avx_sll_epu32_immi ymm, ymmm, imm, size=4, ext=YMM
 };
 
-def macroop VEX_VPSLLD_YMM_M_I {
-    fault "std::make_shared<UnimpInstFault>()"
-};
-
-def macroop VEX_VPSLLD_YMM_P_I {
-    fault "std::make_shared<UnimpInstFault>()"
-};
-
 def macroop VEX_VPSLLQ_YMM_YMM_XMM {
     gem5_avx_sll_epu64 ymm1, ymm2, xmmm, size=8, ext=YMM
 };
@@ -114,51 +90,29 @@ def macroop VEX_VPSLLQ_YMM_YMM_I {
     gem5_avx_sll_epu64_immi ymm, ymmm, imm, size=8, ext=YMM
 };
 
-def macroop VEX_VPSLLQ_YMM_M_I {
-    fault "std::make_shared<UnimpInstFault>()"
-};
-
-def macroop VEX_VPSLLQ_YMM_P_I {
-    fault "std::make_shared<UnimpInstFault>()"
-};
-
 def macroop VEX_VPSLLDQ_XMM_XMM_I {
     gem5_avx_slli_epu128i xmm, xmmm, imm, size=16, ext=XMM
-};
-
-def macroop VEX_VPSLLDQ_XMM_M_I {
-    ldvec128 uvec1, seg, sib, disp, dataSize=16
-    gem5_avx_slli_epu128i xmm, uvec1, imm, size=16, ext=XMM
-};
-
-def macroop VEX_VPSLLDQ_XMM_P_I {
-    rdip t7
-    ldvec128 uvec1, seg, riprel, disp, dataSize=16
-    gem5_avx_slli_epu128i xmm, uvec1, imm, size=16, ext=XMM
 };
 
 def macroop VEX_VPSLLDQ_YMM_YMM_I {
     gem5_avx_slli_epu128i ymm, ymmm, imm, size=32, ext=YMM
 };
 
-def macroop VEX_VPSLLDQ_YMM_M_I {
-    ldvec256 uvec1, seg, sib, disp, dataSize=32
-    gem5_avx_slli_epu128i ymm, uvec1, imm, size=32, ext=YMM
-};
-
-def macroop VEX_VPSLLDQ_YMM_P_I {
-    rdip t7
-    ldvec256 uvec1, seg, riprel, disp, dataSize=32
-    gem5_avx_slli_epu128i ymm, uvec1, imm, size=32, ext=YMM
-};
-
 '''
 
 # The word shifts and the variable shifts. See macroop_gen.py.
-from ...macroop_gen import binop, shift_imm, shift_count
+from ...macroop_gen import binop, shift_imm, shift_imm_invalid_memory, \
+        shift_count
 
 microcode += shift_imm("VEX_VPSLLW", "gem5_avx_sll_epu16_imm", 2)
 microcode += shift_count("VEX_VPSLLW", "gem5_avx_sll_epu16", 2)
+
+# A memory source for a shift by an immediate is #UD; see
+# shift_imm_invalid_memory. These four have their register forms written out
+# above.
+microcode += shift_imm_invalid_memory("VEX_VPSLLD")
+microcode += shift_imm_invalid_memory("VEX_VPSLLQ")
+microcode += shift_imm_invalid_memory("VEX_VPSLLDQ")
 
 microcode += binop("VEX_VPSLLVD", "gem5_avx_sllv_epu32", 4)
 microcode += binop("VEX_VPSLLVQ", "gem5_avx_sllv_epu64", 8)
