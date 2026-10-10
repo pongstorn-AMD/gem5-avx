@@ -42,7 +42,7 @@
 // Decode the two byte opcodes
 //
 'X86ISA::TwoByteOpcode': decode OPCODE_OP_TOP5 {
-    format WarnUnimpl {
+    format FailUnimpl {
         0x00: decode OPCODE_OP_BOTTOM3 {
             //0x00: group6();
             0x00: decode MODRM_REG {

@@ -29,7 +29,7 @@
 // Decode the three byte opcodes with the 0f38 prefix.
 //
 'X86ISA::ThreeByte0F38Opcode': decode LEGACY_OP {
-    format WarnUnimpl {
+    format FailUnimpl {
         1: decode OPCODE_OP {
             0x00: Inst::PSHUFB(Vdq,Wdq);
             0x01: Inst::PHADDW(Vdq,Wdq);
