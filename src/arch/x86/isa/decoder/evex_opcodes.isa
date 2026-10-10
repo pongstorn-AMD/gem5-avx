@@ -212,7 +212,7 @@ format WarnUnimpl {
                     }
                     0x3: EvexMultiInst_EVEX_VPACKSSWB_Vx_Hx_Wx();
                     0x4: EvexMultiInst::EVEX_VPCMPGTB(EVEX_LL, [GKv,Hx,Wx]);
-                    0x5: EvexMultiInst_EVEX_VPCMPGTW_Kv_Hx_Wx();
+                    0x5: EvexMultiInst::EVEX_VPCMPGTW(EVEX_LL, [GKv,Hx,Wx]);
                     0x6: decode EVEX_W {
                         0x0: EvexMultiInst::EVEX_VPCMPGTD(EVEX_LL, [GKv,Hx,Wx]);
                     }
@@ -1050,6 +1050,12 @@ format WarnUnimpl {
 
             0x0F: decode EVEX_P {
                 0x1: decode OPCODE_OP_BOTTOM3 {
+                    // 0F38 78 and 79 broadcast from a vector register or from
+                    // memory; 7A and 7B below take a general register. Only
+                    // the latter pair was wired up, so a compiler's
+                    // vpbroadcastb/w of an xmm source decoded as UD2.
+                    0x0: EvexMultiInst::EVEX_VPBROADCASTB(EVEX_LL, [Vx,Wdq]);
+                    0x1: EvexMultiInst::EVEX_VPBROADCASTW(EVEX_LL, [Vx,Wdq]);
                     0x2: EvexMultiInst::EVEX_VPBROADCASTB(EVEX_LL, [Vx,Ev]);
                     0x3: EvexMultiInst::EVEX_VPBROADCASTW(EVEX_LL, [Vx,Ev]);
                     0x4: decode EVEX_W {
@@ -1256,8 +1262,10 @@ format WarnUnimpl {
                     0x1: vdppd_Vdq_Hdq_Wdq_Ib();
                     0x2: vmpsadbw_Vx_Hx_Wx_Ib();
                     0x3: decode EVEX_W {
-                        0x0: EvexMultiInst_VSHUFI32X4_Vps_Hps_Wps_Ib();
-                        0x1: EvexMultiInst_VSHUFI64X2y_Vpd_Hpd_Wpd_Ib();
+                        0x0: EvexMultiInst::EVEX_VSHUFI32X4(EVEX_LL,
+                                   [], [Vps,Hps,Wps,Ib], [Vps,Hps,Wps,Ib]);
+                        0x1: EvexMultiInst::EVEX_VSHUFI64X2(EVEX_LL,
+                                   [], [Vpd,Hpd,Wpd,Ib], [Vpd,Hpd,Wpd,Ib]);
                     }
                     0x4: vpclmulqdq_Vdq_Hdq_Wdq_Ib();
                     0x6: vperm2i128_Vqq_Hqq_Wqq_Ib();

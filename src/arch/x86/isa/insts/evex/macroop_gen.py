@@ -115,6 +115,25 @@ def shift_imm(name, microop, size, only=None):
     return "".join(out)
 
 
+def binop_imm(name, microop, size, only=None):
+    """
+    A two-source instruction whose third operand is an immediate: VSHUFI64X2
+    and its neighbours. The immediate reaches the microop through the ext
+    bitfield rather than as an operand of its own.
+    """
+    out = []
+    for ext, reg, load, width in _widths(only):
+        tail = 'size=%d, ext="(IMMEDIATE & mask(8)) |" + %s' % (size, ext)
+        for form, src, riprel in (("%sMM_I" % ext[0], "%sm" % reg, False),
+                                  ("M_I", "uvec1", False),
+                                  ("P_I", "uvec1", True)):
+            # EVEX_VSHUFI64X2_ZMM_ZMM_ZMM_I, _ZMM_ZMM_M_I, _ZMM_ZMM_P_I
+            pre = [] if src == "%sm" % reg else _load(load, width, riprel)
+            out.append(_macroop("%s_%s_%s_%s" % (name, ext, ext, form), pre + [
+                "    %s %s1, %s2, %s, %s" % (microop, reg, reg, src, tail)]))
+    return "".join(out)
+
+
 def cmp_to_mask(name, microop, size, mask_microop=None, only=None):
     """
     A comparison writing a mask register: VPCMPGTB and friends. The
