@@ -15,7 +15,9 @@ enum EVEXTupleType {
   FM,	// FULL_MEM
   FX,   // FU or FM
   HA,	// HALF
-  T1,	// TUPLE1_SCALAR
+  T1,	// TUPLE1_SCALAR, 32/64-bit input
+  TB,	// TUPLE1_SCALAR, 8-bit input
+  TW,	// TUPLE1_SCALAR, 16-bit input
   TF,	// TUPLE1_FIXED
   TX,	// TUPLE1_4X
   T2,	// TUPLE2
@@ -66,7 +68,7 @@ const Decoder::ByteTable Decoder::EVEXTupleTypeTable[10] =
 /*  9 */ O , O , O , O , O , O , O , O , O , O , O , O , O , O , O , O ,
 /*  A */ O , O , O , O , O , O , O , O , O , O , O , O , O , O , O , O ,
 /*  B */ O , O , O , O , O , O , O , O , O , O , O , O , O , O , O , O ,
-/*  C */ O , O , FU, O , T1, O , FU, O , O , O , O , O , O , O , O , O ,
+/*  C */ O , O , FU, O , TW, O , FU, O , O , O , O , O , O , O , O , O ,
 /*  D */ O , MX, MX, MX, FU, FM, T1, O , FM, O , FM, FU, FM, FM, FM, FU,
 /*  E */ FM, MX, MX, FM, FM, FM, FU, FM, FM, FM, FM, FU, FM, FM, FM, FU,
 /*  F */ O , MX, MX, MX, FU, FM, FM, O , FM, FM, FU, FU, FM, FM, FU, O
@@ -81,7 +83,7 @@ const Decoder::ByteTable Decoder::EVEXTupleTypeTable[10] =
 /*  4 */ FU, O , FU, T1, FU, FU, FU, FU, O , O , O , O , FU, T1, FU, T1,
 /*  5 */ FU, FU, FU, FU, FM, FU, O , O , T1, T2, T4, T8, O , O , O , O ,
 /*  6 */ O , O , T1, T1, FU, FU, FM, O , O , O , O , O , O , O , O , O ,
-/*  7 */ FM, FU, FM, FU, O , FM, FU, FU, T1, T1, T1, T1, T1, FM, FU, FU,
+/*  7 */ FM, FU, FM, FU, O , FM, FU, FU, TB, TW, T1, T1, T1, FM, FU, FU,
 /*  8 */ O , O , O , FU, O , O , O , O , T1, T1, T1, T1, O , FM, O , FM,
 /*  9 */ T1, T1, T1, T1, O , O , FU, FU, FU, T1, FU, T1, FU, T1, FU, T1,
 /*  A */ T1, T1, T1, T1, O , O , FU, FU, FU, T1, FU, T1, FU, T1, FU, T1,
@@ -95,8 +97,8 @@ const Decoder::ByteTable Decoder::EVEXTupleTypeTable[10] =
     {    //LSB
 // MSB   O | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F
 /*  O */ FU, FU, O , FU, FU, FU, O , O , FU, FU, T1, T1, O , O , O , FM,
-/*  1 */ O , O , O , O , T1, T1, T1, T1, T4, T4, T8, T8, O , HM, FU, FU,
-/*  2 */ T1, T1, T1, FU, O , FU, FU, T1, O , O , O , O , O , O , O , O ,
+/*  1 */ O , O , O , O , TB, TW, T1, T1, T4, T4, T8, T8, O , HM, FU, FU,
+/*  2 */ TB, T1, T1, FU, O , FU, FU, T1, O , O , O , O , O , O , O , O ,
 /*  3 */ O , O , O , O , O , O , O , O , T4, T4, T8, T8, O , O , FM, FM,
 /*  4 */ O , O , FM, FU, FM, O , O , O , O , O , O , O , O , O , O , O ,
 /*  5 */ FU, T1, O , O , FU, T1, FU, T1, O , O , O , O , O , O , O , O ,
@@ -201,8 +203,17 @@ void Decoder::processCompressedDisplacement() {
 		shiftBits = emi.evex.ll + 4;
 		break;
 	case T1:
+		// Tuple1 Scalar comes in three input sizes and N follows the
+		// input, not anything EVEX encodes, so the size has to be read
+		// off the opcode: this case is the 32/64-bit one and TB and TW
+		// below are the 8- and 16-bit ones.
 		shiftBits = emi.evex.w + 2;
-		//input size 8/16 bit??? how to distinguish??
+		break;
+	case TB:
+		shiftBits = 0;
+		break;
+	case TW:
+		shiftBits = 1;
 		break;
 	case TF:
 		shiftBits = 3; // 64bits, 2: 32 bits???
