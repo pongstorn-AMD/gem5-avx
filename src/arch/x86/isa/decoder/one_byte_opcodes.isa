@@ -43,11 +43,11 @@
         0x00: decode OPCODE_OP_BOTTOM3 {
             0x6: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::push_ES();
+                default: FailUnimpl::push_ES();
             }
             0x7: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::pop_ES();
+                default: FailUnimpl::pop_ES();
             }
             default: MultiInst::ADD(OPCODE_OP_BOTTOM3,
                                     [Eb,Gb], [Ev,Gv],
@@ -57,7 +57,7 @@
         0x01: decode OPCODE_OP_BOTTOM3 {
             0x6: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::push_CS();
+                default: FailUnimpl::push_CS();
             }
             //Any time this is seen, it should generate a two byte opcode
             0x7: M5InternalError::error(
@@ -70,11 +70,11 @@
         0x02: decode OPCODE_OP_BOTTOM3 {
             0x6: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::push_SS();
+                default: FailUnimpl::push_SS();
             }
             0x7: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::pop_SS();
+                default: FailUnimpl::pop_SS();
             }
             default: MultiInst::ADC(OPCODE_OP_BOTTOM3,
                                     [Eb,Gb], [Ev,Gv],
@@ -84,11 +84,11 @@
         0x03: decode OPCODE_OP_BOTTOM3 {
             0x6: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::push_DS();
+                default: FailUnimpl::push_DS();
             }
             0x7: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::pop_DS();
+                default: FailUnimpl::pop_DS();
             }
             default: MultiInst::SBB(OPCODE_OP_BOTTOM3,
                                     [Eb,Gb], [Ev,Gv],
@@ -100,7 +100,7 @@
                 {{"Tried to execute the ES segment override prefix!"}});
             0x7: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::daa();
+                default: FailUnimpl::daa();
             }
             default: MultiInst::AND(OPCODE_OP_BOTTOM3,
                                     [Eb,Gb], [Ev,Gv],
@@ -112,7 +112,7 @@
                 {{"Tried to execute the CS segment override prefix!"}});
             0x7: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::das();
+                default: FailUnimpl::das();
             }
             default: MultiInst::SUB(OPCODE_OP_BOTTOM3,
                                     [Eb,Gb], [Ev,Gv],
@@ -124,7 +124,7 @@
                 {{"Tried to execute the SS segment override prefix!"}});
             0x7: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::aaa();
+                default: FailUnimpl::aaa();
             }
             default: MultiInst::XOR(OPCODE_OP_BOTTOM3,
                                     [Eb,Gb], [Ev,Gv],
@@ -136,7 +136,7 @@
                 {{"Tried to execute the DS segment override prefix!"}});
             0x7: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::aas();
+                default: FailUnimpl::aas();
             }
             default: MultiInst::CMP(OPCODE_OP_BOTTOM3,
                                     [Eb,Gb], [Ev,Gv],
@@ -173,7 +173,7 @@
                 //set to "v" in order to have a consistent register size.
                 //This shouldn't affect behavior.
                 0x0: MOVSXD(Gv,Ev);
-                default: WarnUnimpl::arpl_Ew_Gw();
+                default: FailUnimpl::arpl_Ew_Gw();
             }
             0x4: M5InternalError::error(
                 {{"Tried to execute the FS segment override prefix!"}});
@@ -302,9 +302,9 @@
             0x1: CQO(rAv,rDv);
             0x2: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::call_far_Ap();
+                default: FailUnimpl::call_far_Ap();
             }
-            0x3: WarnUnimpl::fwait(); //aka wait
+            0x3: FailUnimpl::fwait(); //aka wait
             0x4: PUSHF();
             0x5: POPF();
             //The 64 bit versions of both of these should be illegal only
@@ -362,11 +362,11 @@
             0x3: RET_NEAR();
             0x4: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::les_Gz_Mp();
+                default: FailUnimpl::les_Gz_Mp();
             }
             0x5: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::lds_Gz_Mp();
+                default: FailUnimpl::lds_Gz_Mp();
             }
             //0x6: group12_Eb_Ib();
             0x6: decode MODRM_REG {
@@ -466,11 +466,11 @@
             }
             0x4: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::aam_Ib();
+                default: FailUnimpl::aam_Ib();
             }
             0x5: decode MODE_SUBMODE {
                 0x0: UD2();
-                default: WarnUnimpl::aad_Ib();
+                default: FailUnimpl::aad_Ib();
             }
             0x6: decode MODE_SUBMODE {
                 0x0: UD2();
@@ -508,7 +508,7 @@
         0x1E: decode OPCODE_OP_BOTTOM3 {
             0x0: M5InternalError::error(
                 {{"Tried to execute the lock prefix!"}});
-            0x1: WarnUnimpl::int1();
+            0x1: FailUnimpl::int1();
             0x2: M5InternalError::error(
                 {{"Tried to execute the repne prefix!"}});
             0x3: M5InternalError::error(
@@ -557,7 +557,7 @@
                 0x0: INC(Ev);
                 0x1: DEC(Ev);
                 0x2: CALL_NEAR(Ev);
-                0x3: WarnUnimpl::call_far_Mp();
+                0x3: FailUnimpl::call_far_Mp();
                 0x4: JMP(Ev);
                 0x5: decode MODE_SUBMODE {
                     0x0: JMP_FAR(Mz);

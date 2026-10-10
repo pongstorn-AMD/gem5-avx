@@ -318,8 +318,8 @@
                 0x4: decode OPCODE_OP_BOTTOM3 {
                     0x0: MOVSS(Vd,Wd);
                     0x1: MOVSS(Wd,Vd);
-                    0x2: WarnUnimpl::movsldup_Vo_Wo();
-                    0x6: WarnUnimpl::movshdup_Vo_Wo();
+                    0x2: FailUnimpl::movsldup_Vo_Wo();
+                    0x6: FailUnimpl::movshdup_Vo_Wo();
                     default: UD2();
                 }
                 // operand size (0x66)
@@ -345,10 +345,10 @@
             0x03: decode OPCODE_OP_BOTTOM3 {
                 //group16();
                 0x0: decode MODRM_REG {
-                    0x0: WarnUnimpl::prefetch_nta();
+                    0x0: FailUnimpl::prefetch_nta();
                     0x1: PREFETCH_T0(Mb);
-                    0x2: WarnUnimpl::prefetch_t1();
-                    0x3: WarnUnimpl::prefetch_t2();
+                    0x2: FailUnimpl::prefetch_t1();
+                    0x3: FailUnimpl::prefetch_t2();
                     default: HINT_NOP();
                 }
                 0x1: HINT_NOP();
@@ -475,7 +475,7 @@
                 0x0: decode OPCODE_OP_BOTTOM3 {
                     0x0: MOVMSKPS(Gd,VRo);
                     0x1: SQRTPS(Vo,Wo);
-                    0x2: WarnUnimpl::rqsrtps_Vo_Wo();
+                    0x2: FailUnimpl::rqsrtps_Vo_Wo();
                     0x3: RCPPS(Vo,Wo);
                     0x4: ANDPS(Vo,Wo);
                     0x5: ANDNPS(Vo,Wo);
@@ -485,7 +485,7 @@
                 // repe (0xF3)
                 0x4: decode OPCODE_OP_BOTTOM3 {
                     0x1: SQRTSS(Vd,Wd);
-                    0x2: WarnUnimpl::rsqrtss_Vd_Wd();
+                    0x2: FailUnimpl::rsqrtss_Vd_Wd();
                     0x3: RCPSS(Vd,Wd);
                     default: UD2();
                 }
@@ -683,8 +683,8 @@
             0x0F: decode LEGACY_DECODEVAL {
                 // no prefix
                 0x0: decode OPCODE_OP_BOTTOM3 {
-                    0x0: WarnUnimpl::vmread_Edp_Gdp();
-                    0x1: WarnUnimpl::vmwrite_Gdp_Edp();
+                    0x0: FailUnimpl::vmread_Edp_Gdp();
+                    0x1: FailUnimpl::vmwrite_Gdp_Edp();
                     0x6: MOVD(Edp,Pdp);
                     0x7: MOVQ(Qq,Pq);
                     default: UD2();
@@ -839,10 +839,10 @@
             0x16: decode OPCODE_OP_BOTTOM3 {
                 0x0: CMPXCHG(Eb,Gb);
                 0x1: CMPXCHG(Ev,Gv);
-                0x2: WarnUnimpl::lss_Gz_Mp();
+                0x2: FailUnimpl::lss_Gz_Mp();
                 0x3: BTR(Ev,Gv);
-                0x4: WarnUnimpl::lfs_Gz_Mp();
-                0x5: WarnUnimpl::lgs_Gz_Mp();
+                0x4: FailUnimpl::lfs_Gz_Mp();
+                0x5: FailUnimpl::lgs_Gz_Mp();
                 //The size of the second operand in these instructions
                 //should really be "b" or "w", but it's set to v in order
                 //to have a consistent register size. This shouldn't
@@ -852,8 +852,8 @@
             }
             0x17: decode OPCODE_OP_BOTTOM3 {
                 0x0: decode LEGACY_REP {
-                    0x0: WarnUnimpl::jmpe_Jz();
-                    0x1: WarnUnimpl::popcnt_Gv_Ev();
+                    0x0: FailUnimpl::jmpe_Jz();
+                    0x1: FailUnimpl::popcnt_Gv_Ev();
                 }
                 //0x1: group10_UD2();
                 0x1: UD2();
@@ -894,15 +894,15 @@
                 0x7: decode MODRM_REG {
                     //Also CMPXCHG16B
                     0x1: CMPXCHG8B(Mdp);
-                    0x4: WarnUnimpl::xsavec_M();
+                    0x4: FailUnimpl::xsavec_M();
                     0x6: decode LEGACY_OP {
-                        0x1: WarnUnimpl::vmclear_Mq();
+                        0x1: FailUnimpl::vmclear_Mq();
                         default: decode LEGACY_REP {
-                            0x1: WarnUnimpl::vmxon_Mq();
-                            0x0: WarnUnimpl::vmptrld_Mq();
+                            0x1: FailUnimpl::vmxon_Mq();
+                            0x0: FailUnimpl::vmptrld_Mq();
                         }
                     }
-                    0x7: WarnUnimpl::vmptrst_Mq();
+                    0x7: FailUnimpl::vmptrst_Mq();
                     default: UD2();
                 }
                 default: decode LEGACY_DECODEVAL {
@@ -971,7 +971,7 @@
                 }
                 // repne (0xF2)
                 0x8: decode OPCODE_OP_BOTTOM3 {
-                    0x0: WarnUnimpl::addsubps_Vo_Wo();
+                    0x0: FailUnimpl::addsubps_Vo_Wo();
                     0x6: MOVDQ2Q(Pq,VRq);
                     default: UD2();
                 }
