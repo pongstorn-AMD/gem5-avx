@@ -30,7 +30,7 @@
 //
 // Decode the opcodes with vex prefix.
 //
-format WarnUnimpl {
+format FailUnimpl {
   'X86ISA::EvexOpcode': decode EVEX_OPMASK {
     0x0: decode EVEX_MAP {
         0x01: decode OPCODE_OP_TOP5 {

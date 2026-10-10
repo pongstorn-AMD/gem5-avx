@@ -379,7 +379,7 @@
                 default: UD2();
             }
         }
-        format WarnUnimpl {
+        format FailUnimpl {
             0x19: decode OPCODE_OP_BOTTOM3 {
                 // The second parameter here should be of size b, but
                 // immediate sizes are determined elsewhere and this would

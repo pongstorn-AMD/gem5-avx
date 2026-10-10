@@ -28,7 +28,7 @@
 //
 // Decode the three byte opcodes with the 0f3a prefix.
 //
-format WarnUnimpl {
+format FailUnimpl {
     'X86ISA::ThreeByte0F3AOpcode': decode LEGACY_OP {
         1: decode OPCODE_OP {
             0x08: Inst::ROUNDPS(Vps,Wps,Ib);
