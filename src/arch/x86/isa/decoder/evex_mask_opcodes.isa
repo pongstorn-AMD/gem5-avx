@@ -637,6 +637,8 @@
 
             0x0F: decode EVEX_P {
                 0x1: decode OPCODE_OP_BOTTOM3 {
+                    0x0: EvexMultiInst::EVEX_VPBROADCASTB(EVEX_LL, [Vx,Wdq,Kv]);
+                    0x1: EvexMultiInst::EVEX_VPBROADCASTW(EVEX_LL, [Vx,Wdq,Kv]);
                     0x2: EvexMultiInst::EVEX_VPBROADCASTB(EVEX_LL, [Vx,Ev,Kv]);
                     0x3: EvexMultiInst::EVEX_VPBROADCASTW(EVEX_LL, [Vx,Ev,Kv]);
                     0x4: decode EVEX_W {

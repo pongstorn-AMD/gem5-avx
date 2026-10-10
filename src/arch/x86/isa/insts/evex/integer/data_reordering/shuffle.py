@@ -465,3 +465,14 @@ def macroop EVEX_VPERMT2Q_ZMM_ZMM_P {
 };
 
 '''
+
+# The 128-bit lane shuffles. These are the integer forms of VSHUFF32X4 and
+# VSHUFF64X2 and select lanes identically, so they share those microops: the
+# selection is of whole lanes and so does not read an element type. There is no
+# 128-bit form, a shuffle of 128-bit lanes needing at least two of them.
+from ...macroop_gen import binop_imm
+
+microcode += binop_imm("EVEX_VSHUFI32X4", "gem5_evex_shuffle_32x4", 4,
+        only=["YMM", "ZMM"])
+microcode += binop_imm("EVEX_VSHUFI64X2", "gem5_evex_shuffle_64x2", 8,
+        only=["YMM", "ZMM"])
